@@ -6,7 +6,7 @@ base16-bytestring-0.1.1.6-C6ltWpupAnRDcEOhIJCa9L:2657
 bytestring-0.10.8.2-FBklFuapa1a7kq4yflY7Bt:1008
 colour-2.3.5-LFkzp284SGfHoPQQyfBpOL:118333
 containers-0.6.0.1-BAqcfV1UBBeCIRjPbUYeSG:26494
-ghc-prim:                61481
+ghc-prim:                61482
 ghcjs-base-0.2.0.0-3AL887NN1iHz5PBJwbQmg:6701
 ghcjs-dom-jsffi-0.9.4.0-4Q4PAgDBiCOBOJVbH6D94y:36400
 ghcjs-prim-0.1.1.0-EXzjGVHQlAS2XAXcu0iCbS:9473
@@ -107,7 +107,7 @@ ghc-prim
     GHC.Classes:                        451
     GHC.IntWord64:                      2617
     GHC.Tuple:                          3985
-    GHC.Types:                          35320
+    GHC.Types:                          35321
 
 ghcjs-base-0.2.0.0-3AL887NN1iHz5PBJwbQmg
     Data.JSString.Text:                 201
@@ -195,5 +195,5 @@ transformers-0.5.6.2-KaPP0fdMTwBF02jPgfEE5s
 
 
 
-packed metadata: 382598
+packed metadata: 382596
 
