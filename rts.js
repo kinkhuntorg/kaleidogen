@@ -1334,61 +1334,15 @@ var h$ret7;
 var h$ret8;
 var h$ret9;
 var h$ret10;
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/* platform-specific setup */
-// top-level debug initialization needs this. declare it in case we aren't in the same file as out.js
 function h$ghcjszmprimZCGHCJSziPrimziJSVal_con_e() { return h$stack[h$sp]; };
-/*
-   if browser mode is active (GHCJS_BROWSER is defined), all the runtime platform
-   detection code should be removed by the preprocessor. The h$isPlatform variables
-   are undeclared.
-
-   in non-browser mode, use h$isNode, h$isJsShell, h$isBrowser to find the current
-   platform.
-
-   more platforms should be added here in the future
-*/
-var h$isNode = false; // runtime is node.js
-var h$isJvm = false; // runtime is JVM
-var h$isJsShell = false; // runtime is SpiderMonkey jsshell
-var h$isJsCore = false; // runtime is JavaScriptCore jsc
-var h$isBrowser = false; // running in browser or everything else
-var h$isGHCJSi = false; // Code is GHCJSi (browser or node)
-// load all required node.js modules
+var h$isNode = false;
+var h$isJvm = false;
+var h$isJsShell = false;
+var h$isJsCore = false;
+var h$isBrowser = false;
+var h$isGHCJSi = false;
 if(typeof process !== 'undefined' && (typeof h$TH !== 'undefined' || (typeof require !== 'undefined' && typeof module !== 'undefined' && module.exports))) {
     h$isNode = true;
-    // we have to use these names for the closure compiler externs to work
     var fs = require('fs');
     var path = require('path');
     var os = require('os');
@@ -1399,13 +1353,10 @@ if(typeof process !== 'undefined' && (typeof h$TH !== 'undefined' || (typeof req
     var h$child = child_process;
     var h$process = process;
     function h$getProcessConstants() {
-      // this is a non-public API, but we need these values for things like file access modes
       var cs = process['binding']('constants');
       if(typeof cs.os === 'object' && typeof cs.fs === 'object') {
         return cs;
       } else {
-        // earlier node.js versions (4.x and older) have all constants directly in the constants object
-        // construct something that resembles the hierarchy of the object in new versions:
         return { 'fs': cs
                , 'crypto': cs
                , 'os': { 'UV_UDP_REUSEADDR': cs['UV_UDP_REUSEADDR']
@@ -1438,76 +1389,18 @@ function h$getGlobal(that) {
     if(typeof global !== 'undefined') return global;
     return that;
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/*
-  set up the google closure library. this is a rather hacky setup
-  to make it work with our shims without requiring compilation
-  or pulling in the google closure library module loader
- */
 var goog = {};
 goog.global = h$getGlobal(this);
 goog.provide = function() { };
 goog.require = function() { };
 goog.isDef = function(val) { return val !== undefined; };
 goog.inherits = function(childCtor, parentCtor) {
-  /** @constructor */
   function tempCtor() {};
   tempCtor.prototype = parentCtor.prototype;
   childCtor.superClass_ = parentCtor.prototype;
   childCtor.prototype = new tempCtor();
-  /** @override */
   childCtor.prototype.constructor = childCtor;
-  /**
-   * Calls superclass constructor/method.
-   *
-   * This function is only available if you use goog.inherits to
-   * express inheritance relationships between classes.
-   *
-   * NOTE: This is a replacement for goog.base and for superClass_
-   * property defined in childCtor.
-   *
-   * @param {!Object} me Should always be "this".
-   * @param {string} methodName The method name to call. Calling
-   *     superclass constructor can be done with the special string
-   *     'constructor'.
-   * @param {...*} var_args The arguments to pass to superclass
-   *     method/constructor.
-   * @return {*} The return value of the superclass method/constructor.
-   */
   childCtor.base = function(me, methodName, var_args) {
-    // Copying using loop to avoid deop due to passing arguments object to
-    // function. This is faster in many JS engines as of late 2014.
     var args = new Array(arguments.length - 2);
     for (var i = 2; i < arguments.length; i++) {
       args[i - 2] = arguments[i];
@@ -1520,79 +1413,10 @@ goog.isString = function(v) {
 }
 goog.math = {};
 goog.crypt = {};
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/*
- Copyright (c) 2010, Linden Research, Inc.
- Copyright (c) 2014, Joshua Bell
-
- Permission is hereby granted, free of charge, to any person obtaining a copy
- of this software and associated documentation files (the "Software"), to deal
- in the Software without restriction, including without limitation the rights
- to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
- copies of the Software, and to permit persons to whom the Software is
- furnished to do so, subject to the following conditions:
-
- The above copyright notice and this permission notice shall be included in
- all copies or substantial portions of the Software.
-
- THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
- IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
- FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
- AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
- LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
- OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
- THE SOFTWARE.
- $/LicenseInfo$
- */
-// Original can be found at:
-//   https://bitbucket.org/lindenlab/llsd
-// Modifications by Joshua Bell inexorabletash@gmail.com
-//   https://github.com/inexorabletash/polyfill
-// ES3/ES5 implementation of the Krhonos Typed Array Specification
-//   Ref: http://www.khronos.org/registry/typedarray/specs/latest/
-//   Date: 2011-02-01
-//
-// Variations:
-//  * Allows typed_array.get/set() as alias for subscripts (typed_array[])
-//  * Gradually migrating structure from Khronos spec to ES6 spec
 (function(global) {
   'use strict';
-  var undefined = (void 0); // Paranoia
-  // Beyond this value, index getters/setters (i.e. array[0], array[1]) are so slow to
-  // create, and consume so much memory, that the browser appears frozen.
+  var undefined = (void 0);
   var MAX_ARRAY_LENGTH = 1e5;
-  // Approximations of internal ECMAScript conversion functions
   function Type(v) {
     switch(typeof v) {
     case 'undefined': return 'undefined';
@@ -1602,7 +1426,6 @@ goog.crypt = {};
     default: return v === null ? 'null' : 'object';
     }
   }
-  // Class returns internal [[Class]] property, used to avoid cross-frame instanceof issues:
   function Class(v) { return Object.prototype.toString.call(v).replace(/^\[object *|\]$/g, ''); }
   function IsCallable(o) { return typeof o === 'function'; }
   function ToObject(v) {
@@ -1611,7 +1434,6 @@ goog.crypt = {};
   }
   function ToInt32(v) { return v >> 0; }
   function ToUint32(v) { return v >>> 0; }
-  // Snapshot intrinsics
   var LN2 = Math.LN2,
       abs = Math.abs,
       floor = Math.floor,
@@ -1620,16 +1442,11 @@ goog.crypt = {};
       min = Math.min,
       pow = Math.pow,
       round = Math.round;
-  // emulate ES5 getter/setter API using legacy APIs
-  // http://blogs.msdn.com/b/ie/archive/2010/09/07/transitioning-existing-code-to-the-es5-getter-setter-apis.aspx
-  // (second clause tests for Object.defineProperty() in IE<9 that only supports extending DOM prototypes, but
-  // note that IE<9 does not support __defineGetter__ or __defineSetter__ so it just renders the method harmless)
   (function() {
     var orig = Object.defineProperty;
     var dom_only = !(function(){try{return Object.defineProperty({},'x',{});}catch(_){return false;}}());
     if (!orig || dom_only) {
       Object.defineProperty = function (o, prop, desc) {
-        // In IE8 try built-in implementation for defining properties on DOM prototypes.
         if (orig)
           try { return orig(o, prop, desc); } catch (_) {}
         if (o !== Object(o))
@@ -1644,8 +1461,6 @@ goog.crypt = {};
       };
     }
   }());
-  // ES5: Make obj[index] an alias for obj._getter(index)/obj._setter(index, value)
-  // for index in 0 ... obj.length
   function makeArrayAccessors(obj) {
     if (obj.length > MAX_ARRAY_LENGTH) throw RangeError('Array too large for polyfill');
     function makeArrayAccessor(index) {
@@ -1661,9 +1476,6 @@ goog.crypt = {};
       makeArrayAccessor(i);
     }
   }
-  // Internal conversion functions:
-  //    pack<Type>()   - take a number (interpreted as Type), output a byte array
-  //    unpack<Type>() - take a byte array, output a Type-like number
   function as_signed(value, bits) { var s = 32 - bits; return (value << s) >> s; }
   function as_unsigned(value, bits) { var s = 32 - bits; return (value << s) >>> s; }
   function packI8(n) { return [n & 0xff]; }
@@ -1691,10 +1503,7 @@ goog.crypt = {};
         return w + 1;
       return w % 2 ? w + 1 : w;
     }
-    // Compute sign, exponent, fraction
     if (v !== v) {
-      // NaN
-      // http://dev.w3.org/2006/webapi/WebIDL/#es-type-mapping
       e = (1 << ebits) - 1; f = pow(2, fbits - 1); s = 0;
     } else if (v === Infinity || v === -Infinity) {
       e = (1 << ebits) - 1; f = 0; s = (v < 0) ? 1 : 0;
@@ -1720,28 +1529,23 @@ goog.crypt = {};
           f = 1;
         }
         if (e > bias) {
-          // Overflow
           e = (1 << ebits) - 1;
           f = 0;
         } else {
-          // Normalized
           e = e + bias;
           f = f - pow(2, fbits);
         }
       } else {
-        // Denormalized
         e = 0;
         f = roundToEven(v / pow(2, 1 - bias - fbits));
       }
     }
-    // Pack sign, exponent, fraction
     bits = [];
     for (i = fbits; i; i -= 1) { bits.push(f % 2 ? 1 : 0); f = floor(f / 2); }
     for (i = ebits; i; i -= 1) { bits.push(e % 2 ? 1 : 0); e = floor(e / 2); }
     bits.push(s ? 1 : 0);
     bits.reverse();
     str = bits.join('');
-    // Bits to bytes
     bytes = [];
     while (str.length) {
       bytes.unshift(parseInt(str.substring(0, 8), 2));
@@ -1750,7 +1554,6 @@ goog.crypt = {};
     return bytes;
   }
   function unpackIEEE754(bytes, ebits, fbits) {
-    // Bytes to bits
     var bits = [], i, j, b, str,
         bias, s, e, f;
     for (i = 0; i < bytes.length; ++i) {
@@ -1761,19 +1564,15 @@ goog.crypt = {};
     }
     bits.reverse();
     str = bits.join('');
-    // Unpack sign, exponent, fraction
     bias = (1 << (ebits - 1)) - 1;
     s = parseInt(str.substring(0, 1), 2) ? -1 : 1;
     e = parseInt(str.substring(1, 1 + ebits), 2);
     f = parseInt(str.substring(1 + ebits), 2);
-    // Produce number
     if (e === (1 << ebits) - 1) {
       return f !== 0 ? NaN : s * Infinity;
     } else if (e > 0) {
-      // Normalized
       return s * pow(2, e - bias) * (1 + f / pow(2, fbits));
     } else if (f !== 0) {
-      // Denormalized
       return s * pow(2, -(bias - 1)) * (f / pow(2, fbits));
     } else {
       return s < 0 ? -0 : 0;
@@ -1783,9 +1582,6 @@ goog.crypt = {};
   function packF64(v) { return packIEEE754(v, 11, 52); }
   function unpackF32(b) { return unpackIEEE754(b, 8, 23); }
   function packF32(v) { return packIEEE754(v, 8, 23); }
-  //
-  // 3 The ArrayBuffer Type
-  //
   (function() {
     function ArrayBuffer(length) {
       length = ToInt32(length);
@@ -1796,11 +1592,7 @@ goog.crypt = {};
         this._bytes[i] = 0;
     }
     global.ArrayBuffer = global.ArrayBuffer || ArrayBuffer;
-    //
-    // 5 The Typed Array View Types
-    //
     function $TypedArray$() {
-      // %TypedArray% ( length )
       if (!arguments.length || typeof arguments[0] !== 'object') {
         return (function(length) {
           length = ToInt32(length);
@@ -1811,7 +1603,6 @@ goog.crypt = {};
           Object.defineProperty(this, 'byteOffset', {value: 0});
          }).apply(this, arguments);
       }
-      // %TypedArray% ( typedArray )
       if (arguments.length >= 1 &&
           Type(arguments[0]) === 'object' &&
           arguments[0] instanceof $TypedArray$) {
@@ -1826,7 +1617,6 @@ goog.crypt = {};
             this._setter(i, typedArray._getter(i));
         }).apply(this, arguments);
       }
-      // %TypedArray% ( array )
       if (arguments.length >= 1 &&
           Type(arguments[0]) === 'object' &&
           !(arguments[0] instanceof $TypedArray$) &&
@@ -1843,7 +1633,6 @@ goog.crypt = {};
           }
         }).apply(this, arguments);
       }
-      // %TypedArray% ( buffer, byteOffset=0, length=undefined )
       if (arguments.length >= 1 &&
           Type(arguments[0]) === 'object' &&
           (arguments[0] instanceof ArrayBuffer || Class(arguments[0]) === 'ArrayBuffer')) {
@@ -1851,8 +1640,6 @@ goog.crypt = {};
           byteOffset = ToUint32(byteOffset);
           if (byteOffset > buffer.byteLength)
             throw RangeError('byteOffset out of range');
-          // The given byteOffset must be a multiple of the element
-          // size of the specific type, otherwise an exception is raised.
           if (byteOffset % this.BYTES_PER_ELEMENT)
             throw RangeError('buffer length minus the byteOffset is not a multiple of the element size.');
           if (length === undefined) {
@@ -1872,22 +1659,16 @@ goog.crypt = {};
           Object.defineProperty(this, 'length', {value: length});
         }).apply(this, arguments);
       }
-      // %TypedArray% ( all other argument combinations )
       throw TypeError();
     }
-    // Properties of the %TypedArray Instrinsic Object
-    // %TypedArray%.from ( source , mapfn=undefined, thisArg=undefined )
     Object.defineProperty($TypedArray$, 'from', {value: function(iterable) {
       return new this(iterable);
     }});
-    // %TypedArray%.of ( ...items )
-    Object.defineProperty($TypedArray$, 'of', {value: function(/*...items*/) {
+    Object.defineProperty($TypedArray$, 'of', {value: function( ) {
       return new this(arguments);
     }});
-    // %TypedArray%.prototype
     var $TypedArrayPrototype$ = {};
     $TypedArray$.prototype = $TypedArrayPrototype$;
-    // WebIDL: getter type (unsigned long index);
     Object.defineProperty($TypedArray$.prototype, '_getter', {value: function(index) {
       if (arguments.length < 1) throw SyntaxError('Not enough arguments');
       index = ToUint32(index);
@@ -1901,9 +1682,7 @@ goog.crypt = {};
       }
       return this._unpack(bytes);
     }});
-    // NONSTANDARD: convenience alias for getter: type get(unsigned long index);
     Object.defineProperty($TypedArray$.prototype, 'get', {value: $TypedArray$.prototype._getter});
-    // WebIDL: setter void (unsigned long index, type value);
     Object.defineProperty($TypedArray$.prototype, '_setter', {value: function(index, value) {
       if (arguments.length < 2) throw SyntaxError('Not enough arguments');
       index = ToUint32(index);
@@ -1916,13 +1695,7 @@ goog.crypt = {};
         this.buffer._bytes[o] = bytes[i];
       }
     }});
-    // get %TypedArray%.prototype.buffer
-    // get %TypedArray%.prototype.byteLength
-    // get %TypedArray%.prototype.byteOffset
-    // -- applied directly to the object in the constructor
-    // %TypedArray%.prototype.constructor
     Object.defineProperty($TypedArray$.prototype, 'constructor', {value: $TypedArray$});
-    // %TypedArray%.prototype.copyWithin (target, start, end = this.length )
     Object.defineProperty($TypedArray$.prototype, 'copyWithin', {value: function(target, start) {
       var end = arguments[2];
       var o = ToObject(this);
@@ -1968,9 +1741,6 @@ goog.crypt = {};
       }
       return o;
     }});
-    // %TypedArray%.prototype.entries ( )
-    // -- defined in es6.js to shim browsers w/ native TypedArrays
-    // %TypedArray%.prototype.every ( callbackfn, thisArg = undefined )
     Object.defineProperty($TypedArray$.prototype, 'every', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -1983,7 +1753,6 @@ goog.crypt = {};
       }
       return true;
     }});
-    // %TypedArray%.prototype.fill (value, start = 0, end = this.length )
     Object.defineProperty($TypedArray$.prototype, 'fill', {value: function(value) {
       var start = arguments[1],
           end = arguments[2];
@@ -2013,7 +1782,6 @@ goog.crypt = {};
       }
       return o;
     }});
-    // %TypedArray%.prototype.filter ( callbackfn, thisArg = undefined )
     Object.defineProperty($TypedArray$.prototype, 'filter', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2022,13 +1790,12 @@ goog.crypt = {};
       var res = [];
       var thisp = arguments[1];
       for (var i = 0; i < len; i++) {
-        var val = t._getter(i); // in case fun mutates this
+        var val = t._getter(i);
         if (callbackfn.call(thisp, val, i, t))
           res.push(val);
       }
       return new this.constructor(res);
     }});
-    // %TypedArray%.prototype.find (predicate, thisArg = undefined)
     Object.defineProperty($TypedArray$.prototype, 'find', {value: function(predicate) {
       var o = ToObject(this);
       var lenValue = o.length;
@@ -2045,7 +1812,6 @@ goog.crypt = {};
       }
       return undefined;
     }});
-    // %TypedArray%.prototype.findIndex ( predicate, thisArg = undefined )
     Object.defineProperty($TypedArray$.prototype, 'findIndex', {value: function(predicate) {
       var o = ToObject(this);
       var lenValue = o.length;
@@ -2062,7 +1828,6 @@ goog.crypt = {};
       }
       return -1;
     }});
-    // %TypedArray%.prototype.forEach ( callbackfn, thisArg = undefined )
     Object.defineProperty($TypedArray$.prototype, 'forEach', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2072,7 +1837,6 @@ goog.crypt = {};
       for (var i = 0; i < len; i++)
         callbackfn.call(thisp, t._getter(i), i, t);
     }});
-    // %TypedArray%.prototype.indexOf (searchElement, fromIndex = 0 )
     Object.defineProperty($TypedArray$.prototype, 'indexOf', {value: function(searchElement) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2096,7 +1860,6 @@ goog.crypt = {};
       }
       return -1;
     }});
-    // %TypedArray%.prototype.join ( separator )
     Object.defineProperty($TypedArray$.prototype, 'join', {value: function(separator) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2104,11 +1867,8 @@ goog.crypt = {};
       var tmp = Array(len);
       for (var i = 0; i < len; ++i)
         tmp[i] = t._getter(i);
-      return tmp.join(separator === undefined ? ',' : separator); // Hack for IE7
+      return tmp.join(separator === undefined ? ',' : separator);
     }});
-    // %TypedArray%.prototype.keys ( )
-    // -- defined in es6.js to shim browsers w/ native TypedArrays
-    // %TypedArray%.prototype.lastIndexOf ( searchElement, fromIndex = this.length-1 )
     Object.defineProperty($TypedArray$.prototype, 'lastIndexOf', {value: function(searchElement) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2130,9 +1890,6 @@ goog.crypt = {};
       }
       return -1;
     }});
-    // get %TypedArray%.prototype.length
-    // -- applied directly to the object in the constructor
-    // %TypedArray%.prototype.map ( callbackfn, thisArg = undefined )
     Object.defineProperty($TypedArray$.prototype, 'map', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2144,13 +1901,11 @@ goog.crypt = {};
         res[i] = callbackfn.call(thisp, t._getter(i), i, t);
       return new this.constructor(res);
     }});
-    // %TypedArray%.prototype.reduce ( callbackfn [, initialValue] )
     Object.defineProperty($TypedArray$.prototype, 'reduce', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
       var len = ToUint32(t.length);
       if (!IsCallable(callbackfn)) throw TypeError();
-      // no value to return if no initial value and an empty array
       if (len === 0 && arguments.length === 1) throw TypeError();
       var k = 0;
       var accumulator;
@@ -2165,13 +1920,11 @@ goog.crypt = {};
       }
       return accumulator;
     }});
-    // %TypedArray%.prototype.reduceRight ( callbackfn [, initialValue] )
     Object.defineProperty($TypedArray$.prototype, 'reduceRight', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
       var len = ToUint32(t.length);
       if (!IsCallable(callbackfn)) throw TypeError();
-      // no value to return if no initial value, empty array
       if (len === 0 && arguments.length === 1) throw TypeError();
       var k = len - 1;
       var accumulator;
@@ -2186,7 +1939,6 @@ goog.crypt = {};
       }
       return accumulator;
     }});
-    // %TypedArray%.prototype.reverse ( )
     Object.defineProperty($TypedArray$.prototype, 'reverse', {value: function() {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2199,17 +1951,12 @@ goog.crypt = {};
       }
       return t;
     }});
-    // %TypedArray%.prototype.set(array, offset = 0 )
-    // %TypedArray%.prototype.set(typedArray, offset = 0 )
-    // WebIDL: void set(TypedArray array, optional unsigned long offset);
-    // WebIDL: void set(sequence<type> array, optional unsigned long offset);
     Object.defineProperty($TypedArray$.prototype, 'set', {value: function(index, value) {
       if (arguments.length < 1) throw SyntaxError('Not enough arguments');
       var array, sequence, offset, len,
           i, s, d,
           byteOffset, byteLength, tmp;
       if (typeof arguments[0] === 'object' && arguments[0].constructor === this.constructor) {
-        // void set(TypedArray array, optional unsigned long offset);
         array = arguments[0];
         offset = ToUint32(arguments[1]);
         if (offset + array.length > this.length) {
@@ -2232,7 +1979,6 @@ goog.crypt = {};
           }
         }
       } else if (typeof arguments[0] === 'object' && typeof arguments[0].length !== 'undefined') {
-        // void set(sequence<type> array, optional unsigned long offset);
         sequence = arguments[0];
         len = ToUint32(sequence.length);
         offset = ToUint32(arguments[1]);
@@ -2247,7 +1993,6 @@ goog.crypt = {};
         throw TypeError('Unexpected argument type(s)');
       }
     }});
-    // %TypedArray%.prototype.slice ( start, end )
     Object.defineProperty($TypedArray$.prototype, 'slice', {value: function(start, end) {
       var o = ToObject(this);
       var lenVal = o.length;
@@ -2268,7 +2013,6 @@ goog.crypt = {};
       }
       return a;
     }});
-    // %TypedArray%.prototype.some ( callbackfn, thisArg = undefined )
     Object.defineProperty($TypedArray$.prototype, 'some', {value: function(callbackfn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2282,7 +2026,6 @@ goog.crypt = {};
       }
       return false;
     }});
-    // %TypedArray%.prototype.sort ( comparefn )
     Object.defineProperty($TypedArray$.prototype, 'sort', {value: function(comparefn) {
       if (this === undefined || this === null) throw TypeError();
       var t = Object(this);
@@ -2290,13 +2033,11 @@ goog.crypt = {};
       var tmp = Array(len);
       for (var i = 0; i < len; ++i)
         tmp[i] = t._getter(i);
-      if (comparefn) tmp.sort(comparefn); else tmp.sort(); // Hack for IE8/9
+      if (comparefn) tmp.sort(comparefn); else tmp.sort();
       for (i = 0; i < len; ++i)
         t._setter(i, tmp[i]);
       return t;
     }});
-    // %TypedArray%.prototype.subarray(begin = 0, end = this.length )
-    // WebIDL: TypedArray subarray(long begin, optional long end);
     Object.defineProperty($TypedArray$.prototype, 'subarray', {value: function(start, end) {
       function clamp(v, min, max) { return v < min ? min : v > max ? max : v; }
       start = ToInt32(start);
@@ -2314,15 +2055,7 @@ goog.crypt = {};
       return new this.constructor(
         this.buffer, this.byteOffset + start * this.BYTES_PER_ELEMENT, len);
     }});
-    // %TypedArray%.prototype.toLocaleString ( )
-    // %TypedArray%.prototype.toString ( )
-    // %TypedArray%.prototype.values ( )
-    // %TypedArray%.prototype [ @@iterator ] ( )
-    // get %TypedArray%.prototype [ @@toStringTag ]
-    // -- defined in es6.js to shim browsers w/ native TypedArrays
     function makeTypedArray(elementSize, pack, unpack) {
-      // Each TypedArray type requires a distinct constructor instance with
-      // identical logic, which this produces.
       var TypedArray = function() {
         Object.defineProperty(this, 'constructor', {value: TypedArray});
         $TypedArray$.apply(this, arguments);
@@ -2362,9 +2095,6 @@ goog.crypt = {};
     global.Float32Array = global.Float32Array || Float32Array;
     global.Float64Array = global.Float64Array || Float64Array;
   }());
-  //
-  // 6 The DataView View Type
-  //
   (function() {
     function r(array, index) {
       return IsCallable(array.get) ? array.get(index) : array[index];
@@ -2374,10 +2104,6 @@ goog.crypt = {};
           u8array = new Uint8Array(u16array.buffer);
       return r(u8array, 0) === 0x12;
     }());
-    // DataView(buffer, byteOffset=0, byteLength=undefined)
-    // WebIDL: Constructor(ArrayBuffer buffer,
-    //                     optional unsigned long byteOffset,
-    //                     optional unsigned long byteLength)
     function DataView(buffer, byteOffset, byteLength) {
       if (!(buffer instanceof ArrayBuffer || Class(buffer) === 'ArrayBuffer')) throw TypeError();
       byteOffset = ToUint32(byteOffset);
@@ -2393,10 +2119,6 @@ goog.crypt = {};
       Object.defineProperty(this, 'byteLength', {value: byteLength});
       Object.defineProperty(this, 'byteOffset', {value: byteOffset});
     };
-    // get DataView.prototype.buffer
-    // get DataView.prototype.byteLength
-    // get DataView.prototype.byteOffset
-    // -- applied directly to instances by the constructor
     function makeGetter(arrayType) {
       return function GetViewValue(byteOffset, littleEndian) {
         byteOffset = ToUint32(byteOffset);
@@ -2425,16 +2147,13 @@ goog.crypt = {};
         byteOffset = ToUint32(byteOffset);
         if (byteOffset + arrayType.BYTES_PER_ELEMENT > this.byteLength)
           throw RangeError('Array index out of range');
-        // Get bytes
         var typeArray = new arrayType([value]),
             byteArray = new Uint8Array(typeArray.buffer),
             bytes = [], i, byteView;
         for (i = 0; i < arrayType.BYTES_PER_ELEMENT; i += 1)
           bytes.push(r(byteArray, i));
-        // Flip if necessary
         if (Boolean(littleEndian) === Boolean(IS_BIG_ENDIAN))
           bytes.reverse();
-        // Write them
         byteView = new Uint8Array(this.buffer, byteOffset, arrayType.BYTES_PER_ELEMENT);
         byteView.set(bytes);
       };
@@ -2450,44 +2169,12 @@ goog.crypt = {};
     global.DataView = global.DataView || DataView;
   }());
 }(h$getGlobal(this)));
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
 (function (global, undefined) {
     "use strict";
     if (global.setImmediate) {
         return;
     }
-    var nextHandle = 1; // Spec says greater than zero
+    var nextHandle = 1;
     var tasksByHandle = {};
     var currentlyRunningATask = false;
     var doc = global.document;
@@ -2496,8 +2183,6 @@ goog.crypt = {};
         tasksByHandle[nextHandle] = partiallyApplied.apply(undefined, args);
         return nextHandle++;
     }
-    // This function accepts the same arguments as setImmediate, but
-    // returns a function that requires no arguments.
     function partiallyApplied(handler) {
         var args = [].slice.call(arguments, 1);
         return function() {
@@ -2509,11 +2194,7 @@ goog.crypt = {};
         };
     }
     function runIfPresent(handle) {
-        // From the spec: "Wait until any invocations of this algorithm started before this one have completed."
-        // So if we're currently running a task, we'll need to delay this invocation.
         if (currentlyRunningATask) {
-            // Delay by doing a setTimeout. setImmediate was tried instead, but in Firefox 7 it generated a
-            // "too much recursion" error.
             setTimeout(partiallyApplied(runIfPresent, handle), 0);
         } else {
             var task = tasksByHandle[handle];
@@ -2539,8 +2220,6 @@ goog.crypt = {};
         };
     }
     function canUsePostMessage() {
-        // The test against `importScripts` prevents this implementation from being installed inside a web worker,
-        // where `global.postMessage` means something completely different and can't be used for this purpose.
         if (global.postMessage && !global.importScripts) {
             var postMessageIsAsynchronous = true;
             var oldOnMessage = global.onmessage;
@@ -2553,9 +2232,6 @@ goog.crypt = {};
         }
     }
     function installPostMessageImplementation() {
-        // Installs an event handler on `global` for the `message` event: see
-        // * https://developer.mozilla.org/en/DOM/window.postMessage
-        // * http://www.whatwg.org/specs/web-apps/current-work/multipage/comms.html#crossDocumentMessages
         var messagePrefix = "setImmediate$" + Math.random() + "$";
         var onGlobalMessage = function(event) {
             if (event.source === global &&
@@ -2591,8 +2267,6 @@ goog.crypt = {};
         var html = doc.documentElement;
         setImmediate = function() {
             var handle = addFromSetImmediateArguments(arguments);
-            // Create a <script> element; its readystatechange event will be fired asynchronously once it is inserted
-            // into the document. Do so, thus queuing up the task. Remember to clean up once it's been called.
             var script = doc.createElement("script");
             script.onreadystatechange = function () {
                 runIfPresent(handle);
@@ -2605,7 +2279,6 @@ goog.crypt = {};
         };
     }
     function installSetTimeoutImplementation() {
-        // jsshell doesn't even have setTimeout
         if(typeof setTimeout === 'undefined') setImmediate = function() { return null; };
         else
           setImmediate = function() {
@@ -2614,132 +2287,29 @@ goog.crypt = {};
             return handle;
         };
     }
-    // If supported, we should attach to the prototype of global, since that is where setTimeout et al. live.
     var attachTo = Object.getPrototypeOf && Object.getPrototypeOf(global);
     attachTo = attachTo && attachTo.setTimeout ? attachTo : global;
-    // Don't get fooled by e.g. browserify environments.
     if ({}.toString.call(global.process) === "[object process]") {
-        // For Node.js before 0.9
         installNextTickImplementation();
     } else
        if (canUsePostMessage()) {
-        // For non-IE10 modern browsers
         installPostMessageImplementation();
     } else if (global.MessageChannel) {
-        // For web workers, where supported
         installMessageChannelImplementation();
     } else if (doc && "onreadystatechange" in doc.createElement("script")) {
-        // For IE 6–8
         installReadyStateChangeImplementation();
     } else {
-        // For older browsers
         installSetTimeoutImplementation();
     }
     attachTo.setImmediate = setImmediate;
     attachTo.clearImmediate = clearImmediate;
 }(h$getGlobal(this)));
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// Copyright 2009 The Closure Library Authors. All Rights Reserved.
-//
-// Licensed under the Apache License, Version 2.0 (the "License");
-// you may not use this file except in compliance with the License.
-// You may obtain a copy of the License at
-//
-//      http://www.apache.org/licenses/LICENSE-2.0
-//
-// Unless required by applicable law or agreed to in writing, software
-// distributed under the License is distributed on an "AS-IS" BASIS,
-// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-// See the License for the specific language governing permissions and
-// limitations under the License.
-/**
- * @fileoverview Defines a Long class for representing a 64-bit two's-complement
- * integer value, which faithfully simulates the behavior of a Java "long". This
- * implementation is derived from LongLib in GWT.
- *
- */
 goog.provide('goog.math.Long');
-/**
- * Constructs a 64-bit two's-complement integer, given its low and high 32-bit
- * values as *signed* integers.  See the from* functions below for more
- * convenient ways of constructing Longs.
- *
- * The internal representation of a long is the two given signed, 32-bit values.
- * We use 32-bit pieces because these are the size of integers on which
- * Javascript performs bit-operations.  For operations like addition and
- * multiplication, we split each number into 16-bit pieces, which can easily be
- * multiplied within Javascript's floating-point representation without overflow
- * or change in sign.
- *
- * In the algorithms below, we frequently reduce the negative case to the
- * positive case by negating the input(s) and then post-processing the result.
- * Note that we must ALWAYS check specially whether those values are MIN_VALUE
- * (-2^63) because -MIN_VALUE == MIN_VALUE (since 2^63 cannot be represented as
- * a positive number, it overflows back into a negative).  Not handling this
- * case would often result in infinite recursion.
- *
- * @param {number} low  The low (signed) 32 bits of the long.
- * @param {number} high  The high (signed) 32 bits of the long.
- * @struct
- * @constructor
- * @final
- */
 goog.math.Long = function(low, high) {
-  /**
-   * @type {number}
-   * @private
-   */
-  this.low_ = low | 0; // force into 32 signed bits.
-  /**
-   * @type {number}
-   * @private
-   */
-  this.high_ = high | 0; // force into 32 signed bits.
+  this.low_ = low | 0;
+  this.high_ = high | 0;
 };
-// NOTE: Common constant values ZERO, ONE, NEG_ONE, etc. are defined below the
-// from* methods on which they depend.
-/**
- * A cache of the Long representations of small integer values.
- * @type {!Object}
- * @private
- */
 goog.math.Long.IntCache_ = {};
-/**
- * Returns a Long representing the given (32-bit) integer value.
- * @param {number} value The 32-bit integer in question.
- * @return {!goog.math.Long} The corresponding Long value.
- */
 goog.math.Long.fromInt = function(value) {
   if (-128 <= value && value < 128) {
     var cachedObj = goog.math.Long.IntCache_[value];
@@ -2753,12 +2323,6 @@ goog.math.Long.fromInt = function(value) {
   }
   return obj;
 };
-/**
- * Returns a Long representing the given value, provided that it is a finite
- * number.  Otherwise, zero is returned.
- * @param {number} value The number in question.
- * @return {!goog.math.Long} The corresponding Long value.
- */
 goog.math.Long.fromNumber = function(value) {
   if (isNaN(value) || !isFinite(value)) {
     return goog.math.Long.ZERO;
@@ -2774,23 +2338,9 @@ goog.math.Long.fromNumber = function(value) {
         (value / goog.math.Long.TWO_PWR_32_DBL_) | 0);
   }
 };
-/**
- * Returns a Long representing the 64-bit integer that comes by concatenating
- * the given high and low bits.  Each is assumed to use 32 bits.
- * @param {number} lowBits The low 32-bits.
- * @param {number} highBits The high 32-bits.
- * @return {!goog.math.Long} The corresponding Long value.
- */
 goog.math.Long.fromBits = function(lowBits, highBits) {
   return new goog.math.Long(lowBits, highBits);
 };
-/**
- * Returns a Long representation of the given string, written using the given
- * radix.
- * @param {string} str The textual representation of the Long.
- * @param {number=} opt_radix The radix in which the text is written.
- * @return {!goog.math.Long} The corresponding Long value.
- */
 goog.math.Long.fromString = function(str, opt_radix) {
   if (str.length == 0) {
     throw Error('number format error: empty string');
@@ -2804,8 +2354,6 @@ goog.math.Long.fromString = function(str, opt_radix) {
   } else if (str.indexOf('-') >= 0) {
     throw Error('number format error: interior "-" character: ' + str);
   }
-  // Do several (8) digits each time through the loop, so as to
-  // minimize the calls to the very expensive emulated div.
   var radixToPower = goog.math.Long.fromNumber(Math.pow(radix, 8));
   var result = goog.math.Long.ZERO;
   for (var i = 0; i < str.length; i += 8) {
@@ -2821,80 +2369,32 @@ goog.math.Long.fromString = function(str, opt_radix) {
   }
   return result;
 };
-// NOTE: the compiler should inline these constant values below and then remove
-// these variables, so there should be no runtime penalty for these.
-/**
- * Number used repeated below in calculations.  This must appear before the
- * first call to any from* function below.
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_16_DBL_ = 1 << 16;
-/**
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_24_DBL_ = 1 << 24;
-/**
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_32_DBL_ =
     goog.math.Long.TWO_PWR_16_DBL_ * goog.math.Long.TWO_PWR_16_DBL_;
-/**
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_31_DBL_ =
     goog.math.Long.TWO_PWR_32_DBL_ / 2;
-/**
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_48_DBL_ =
     goog.math.Long.TWO_PWR_32_DBL_ * goog.math.Long.TWO_PWR_16_DBL_;
-/**
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_64_DBL_ =
     goog.math.Long.TWO_PWR_32_DBL_ * goog.math.Long.TWO_PWR_32_DBL_;
-/**
- * @type {number}
- * @private
- */
 goog.math.Long.TWO_PWR_63_DBL_ =
     goog.math.Long.TWO_PWR_64_DBL_ / 2;
-/** @type {!goog.math.Long} */
 goog.math.Long.ZERO = goog.math.Long.fromInt(0);
-/** @type {!goog.math.Long} */
 goog.math.Long.ONE = goog.math.Long.fromInt(1);
-/** @type {!goog.math.Long} */
 goog.math.Long.NEG_ONE = goog.math.Long.fromInt(-1);
-/** @type {!goog.math.Long} */
 goog.math.Long.MAX_VALUE =
     goog.math.Long.fromBits(0xFFFFFFFF | 0, 0x7FFFFFFF | 0);
-/** @type {!goog.math.Long} */
 goog.math.Long.MIN_VALUE = goog.math.Long.fromBits(0, 0x80000000 | 0);
-/**
- * @type {!goog.math.Long}
- * @private
- */
 goog.math.Long.TWO_PWR_24_ = goog.math.Long.fromInt(1 << 24);
-/** @return {number} The value, assuming it is a 32-bit integer. */
 goog.math.Long.prototype.toInt = function() {
   return this.low_;
 };
-/** @return {number} The closest floating-point representation to this value. */
 goog.math.Long.prototype.toNumber = function() {
   return this.high_ * goog.math.Long.TWO_PWR_32_DBL_ +
          this.getLowBitsUnsigned();
 };
-/**
- * @param {number=} opt_radix The radix in which the text should be written.
- * @return {string} The textual representation of this value.
- * @override
- */
 goog.math.Long.prototype.toString = function(opt_radix) {
   var radix = opt_radix || 10;
   if (radix < 2 || 36 < radix) {
@@ -2905,8 +2405,6 @@ goog.math.Long.prototype.toString = function(opt_radix) {
   }
   if (this.isNegative()) {
     if (this.equals(goog.math.Long.MIN_VALUE)) {
-      // We need to change the Long value before it can be negated, so we remove
-      // the bottom-most digit in this base and then recurse to do the rest.
       var radixLong = goog.math.Long.fromNumber(radix);
       var div = this.div(radixLong);
       var rem = div.multiply(radixLong).subtract(this);
@@ -2915,8 +2413,6 @@ goog.math.Long.prototype.toString = function(opt_radix) {
       return '-' + this.negate().toString(radix);
     }
   }
-  // Do several (6) digits each time through the loop, so as to
-  // minimize the calls to the very expensive emulated div.
   var radixToPower = goog.math.Long.fromNumber(Math.pow(radix, 6));
   var rem = this;
   var result = '';
@@ -2935,23 +2431,16 @@ goog.math.Long.prototype.toString = function(opt_radix) {
     }
   }
 };
-/** @return {number} The high 32-bits as a signed value. */
 goog.math.Long.prototype.getHighBits = function() {
   return this.high_;
 };
-/** @return {number} The low 32-bits as a signed value. */
 goog.math.Long.prototype.getLowBits = function() {
   return this.low_;
 };
-/** @return {number} The low 32-bits as an unsigned value. */
 goog.math.Long.prototype.getLowBitsUnsigned = function() {
   return (this.low_ >= 0) ?
       this.low_ : goog.math.Long.TWO_PWR_32_DBL_ + this.low_;
 };
-/**
- * @return {number} Returns the number of bits needed to represent the absolute
- *     value of this Long.
- */
 goog.math.Long.prototype.getNumBitsAbs = function() {
   if (this.isNegative()) {
     if (this.equals(goog.math.Long.MIN_VALUE)) {
@@ -2969,66 +2458,33 @@ goog.math.Long.prototype.getNumBitsAbs = function() {
     return this.high_ != 0 ? bit + 33 : bit + 1;
   }
 };
-/** @return {boolean} Whether this value is zero. */
 goog.math.Long.prototype.isZero = function() {
   return this.high_ == 0 && this.low_ == 0;
 };
-/** @return {boolean} Whether this value is negative. */
 goog.math.Long.prototype.isNegative = function() {
   return this.high_ < 0;
 };
-/** @return {boolean} Whether this value is odd. */
 goog.math.Long.prototype.isOdd = function() {
   return (this.low_ & 1) == 1;
 };
-/**
- * @param {goog.math.Long} other Long to compare against.
- * @return {boolean} Whether this Long equals the other.
- */
 goog.math.Long.prototype.equals = function(other) {
   return (this.high_ == other.high_) && (this.low_ == other.low_);
 };
-/**
- * @param {goog.math.Long} other Long to compare against.
- * @return {boolean} Whether this Long does not equal the other.
- */
 goog.math.Long.prototype.notEquals = function(other) {
   return (this.high_ != other.high_) || (this.low_ != other.low_);
 };
-/**
- * @param {goog.math.Long} other Long to compare against.
- * @return {boolean} Whether this Long is less than the other.
- */
 goog.math.Long.prototype.lessThan = function(other) {
   return this.compare(other) < 0;
 };
-/**
- * @param {goog.math.Long} other Long to compare against.
- * @return {boolean} Whether this Long is less than or equal to the other.
- */
 goog.math.Long.prototype.lessThanOrEqual = function(other) {
   return this.compare(other) <= 0;
 };
-/**
- * @param {goog.math.Long} other Long to compare against.
- * @return {boolean} Whether this Long is greater than the other.
- */
 goog.math.Long.prototype.greaterThan = function(other) {
   return this.compare(other) > 0;
 };
-/**
- * @param {goog.math.Long} other Long to compare against.
- * @return {boolean} Whether this Long is greater than or equal to the other.
- */
 goog.math.Long.prototype.greaterThanOrEqual = function(other) {
   return this.compare(other) >= 0;
 };
-/**
- * Compares this Long with the given one.
- * @param {goog.math.Long} other Long to compare against.
- * @return {number} 0 if they are the same, 1 if the this is greater, and -1
- *     if the given one is greater.
- */
 goog.math.Long.prototype.compare = function(other) {
   if (this.equals(other)) {
     return 0;
@@ -3041,14 +2497,12 @@ goog.math.Long.prototype.compare = function(other) {
   if (!thisNeg && otherNeg) {
     return 1;
   }
-  // at this point, the signs are the same, so subtraction will not overflow
   if (this.subtract(other).isNegative()) {
     return -1;
   } else {
     return 1;
   }
 };
-/** @return {!goog.math.Long} The negation of this value. */
 goog.math.Long.prototype.negate = function() {
   if (this.equals(goog.math.Long.MIN_VALUE)) {
     return goog.math.Long.MIN_VALUE;
@@ -3056,13 +2510,7 @@ goog.math.Long.prototype.negate = function() {
     return this.not().add(goog.math.Long.ONE);
   }
 };
-/**
- * Returns the sum of this and the given Long.
- * @param {goog.math.Long} other Long to add to this one.
- * @return {!goog.math.Long} The sum of this and the given Long.
- */
 goog.math.Long.prototype.add = function(other) {
-  // Divide each number into 4 chunks of 16 bits, and then sum the chunks.
   var a48 = this.high_ >>> 16;
   var a32 = this.high_ & 0xFFFF;
   var a16 = this.low_ >>> 16;
@@ -3085,19 +2533,9 @@ goog.math.Long.prototype.add = function(other) {
   c48 &= 0xFFFF;
   return goog.math.Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32);
 };
-/**
- * Returns the difference of this and the given Long.
- * @param {goog.math.Long} other Long to subtract from this.
- * @return {!goog.math.Long} The difference of this and the given Long.
- */
 goog.math.Long.prototype.subtract = function(other) {
   return this.add(other.negate());
 };
-/**
- * Returns the product of this and the given long.
- * @param {goog.math.Long} other Long to multiply with this.
- * @return {!goog.math.Long} The product of this and the other.
- */
 goog.math.Long.prototype.multiply = function(other) {
   if (this.isZero()) {
     return goog.math.Long.ZERO;
@@ -3118,13 +2556,10 @@ goog.math.Long.prototype.multiply = function(other) {
   } else if (other.isNegative()) {
     return this.multiply(other.negate()).negate();
   }
-  // If both longs are small, use float multiplication
   if (this.lessThan(goog.math.Long.TWO_PWR_24_) &&
       other.lessThan(goog.math.Long.TWO_PWR_24_)) {
     return goog.math.Long.fromNumber(this.toNumber() * other.toNumber());
   }
-  // Divide each long into 4 chunks of 16 bits, and then add up 4x4 products.
-  // We can skip products that would overflow.
   var a48 = this.high_ >>> 16;
   var a32 = this.high_ & 0xFFFF;
   var a16 = this.low_ >>> 16;
@@ -3156,11 +2591,6 @@ goog.math.Long.prototype.multiply = function(other) {
   c48 &= 0xFFFF;
   return goog.math.Long.fromBits((c16 << 16) | c00, (c48 << 16) | c32);
 };
-/**
- * Returns this Long divided by the given one.
- * @param {goog.math.Long} other Long by which to divide.
- * @return {!goog.math.Long} This Long divided by the given one.
- */
 goog.math.Long.prototype.div = function(other) {
   if (other.isZero()) {
     throw Error('division by zero');
@@ -3170,11 +2600,10 @@ goog.math.Long.prototype.div = function(other) {
   if (this.equals(goog.math.Long.MIN_VALUE)) {
     if (other.equals(goog.math.Long.ONE) ||
         other.equals(goog.math.Long.NEG_ONE)) {
-      return goog.math.Long.MIN_VALUE; // recall that -MIN_VALUE == MIN_VALUE
+      return goog.math.Long.MIN_VALUE;
     } else if (other.equals(goog.math.Long.MIN_VALUE)) {
       return goog.math.Long.ONE;
     } else {
-      // At this point, we have |other| >= 2, so |this/other| < |MIN_VALUE|.
       var halfThis = this.shiftRight(1);
       var approx = halfThis.div(other).shiftLeft(1);
       if (approx.equals(goog.math.Long.ZERO)) {
@@ -3197,23 +2626,12 @@ goog.math.Long.prototype.div = function(other) {
   } else if (other.isNegative()) {
     return this.div(other.negate()).negate();
   }
-  // Repeat the following until the remainder is less than other:  find a
-  // floating-point that approximates remainder / other *from below*, add this
-  // into the result, and subtract it from the remainder.  It is critical that
-  // the approximate value is less than or equal to the real value so that the
-  // remainder never becomes negative.
   var res = goog.math.Long.ZERO;
   var rem = this;
   while (rem.greaterThanOrEqual(other)) {
-    // Approximate the result of division. This may be a little greater or
-    // smaller than the actual value.
     var approx = Math.max(1, Math.floor(rem.toNumber() / other.toNumber()));
-    // We will tweak the approximate result by changing it in the 48-th digit or
-    // the smallest non-fractional digit, whichever is larger.
     var log2 = Math.ceil(Math.log(approx) / Math.LN2);
     var delta = (log2 <= 48) ? 1 : Math.pow(2, log2 - 48);
-    // Decrease the approximation until it is smaller than the remainder.  Note
-    // that if it is too large, the product overflows and is negative.
     var approxRes = goog.math.Long.fromNumber(approx);
     var approxRem = approxRes.multiply(other);
     while (approxRem.isNegative() || approxRem.greaterThan(rem)) {
@@ -3221,8 +2639,6 @@ goog.math.Long.prototype.div = function(other) {
       approxRes = goog.math.Long.fromNumber(approx);
       approxRem = approxRes.multiply(other);
     }
-    // We know the answer can't be zero... and actually, zero would cause
-    // infinite recursion since we would make no progress.
     if (approxRes.isZero()) {
       approxRes = goog.math.Long.ONE;
     }
@@ -3231,50 +2647,24 @@ goog.math.Long.prototype.div = function(other) {
   }
   return res;
 };
-/**
- * Returns this Long modulo the given one.
- * @param {goog.math.Long} other Long by which to mod.
- * @return {!goog.math.Long} This Long modulo the given one.
- */
 goog.math.Long.prototype.modulo = function(other) {
   return this.subtract(this.div(other).multiply(other));
 };
-/** @return {!goog.math.Long} The bitwise-NOT of this value. */
 goog.math.Long.prototype.not = function() {
   return goog.math.Long.fromBits(~this.low_, ~this.high_);
 };
-/**
- * Returns the bitwise-AND of this Long and the given one.
- * @param {goog.math.Long} other The Long with which to AND.
- * @return {!goog.math.Long} The bitwise-AND of this and the other.
- */
 goog.math.Long.prototype.and = function(other) {
   return goog.math.Long.fromBits(this.low_ & other.low_,
                                  this.high_ & other.high_);
 };
-/**
- * Returns the bitwise-OR of this Long and the given one.
- * @param {goog.math.Long} other The Long with which to OR.
- * @return {!goog.math.Long} The bitwise-OR of this and the other.
- */
 goog.math.Long.prototype.or = function(other) {
   return goog.math.Long.fromBits(this.low_ | other.low_,
                                  this.high_ | other.high_);
 };
-/**
- * Returns the bitwise-XOR of this Long and the given one.
- * @param {goog.math.Long} other The Long with which to XOR.
- * @return {!goog.math.Long} The bitwise-XOR of this and the other.
- */
 goog.math.Long.prototype.xor = function(other) {
   return goog.math.Long.fromBits(this.low_ ^ other.low_,
                                  this.high_ ^ other.high_);
 };
-/**
- * Returns this Long with bits shifted to the left by the given amount.
- * @param {number} numBits The number of bits by which to shift.
- * @return {!goog.math.Long} This shifted to the left by the given amount.
- */
 goog.math.Long.prototype.shiftLeft = function(numBits) {
   numBits &= 63;
   if (numBits == 0) {
@@ -3291,11 +2681,6 @@ goog.math.Long.prototype.shiftLeft = function(numBits) {
     }
   }
 };
-/**
- * Returns this Long with bits shifted to the right by the given amount.
- * @param {number} numBits The number of bits by which to shift.
- * @return {!goog.math.Long} This shifted to the right by the given amount.
- */
 goog.math.Long.prototype.shiftRight = function(numBits) {
   numBits &= 63;
   if (numBits == 0) {
@@ -3314,13 +2699,6 @@ goog.math.Long.prototype.shiftRight = function(numBits) {
     }
   }
 };
-/**
- * Returns this Long with bits shifted to the right by the given amount, with
- * zeros placed into the new leading bits.
- * @param {number} numBits The number of bits by which to shift.
- * @return {!goog.math.Long} This shifted to the right by the given amount, with
- *     zeros placed into the new leading bits.
- */
 goog.math.Long.prototype.shiftRightUnsigned = function(numBits) {
   numBits &= 63;
   if (numBits == 0) {
@@ -3339,51 +2717,6 @@ goog.math.Long.prototype.shiftRightUnsigned = function(numBits) {
     }
   }
 };
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/*
-  simple set with reasonably fast iteration though an array, which may contain nulls
-  elements must be objects that have a unique _key property
-  collections are expected to be homogeneous
-
-  when iterating over a set with an iterator, the following operations are safe:
-
-   - adding an element to the set (the existing iterator will iterate over the new elements)
-   - removing the last returned element through the iterator
-
-   behaviour for deleting elements is unpredictable and unsafe
-*/
-/** @constructor */
 function h$Set(s) {
     this._vals = [];
     this._keys = [];
@@ -3427,11 +2760,9 @@ h$Set.prototype.clear = function() {
 h$Set.prototype.iter = function() {
     return new h$SetIter(this);
 }
-// returns an array with all values, might contain additional nulls at the end
 h$Set.prototype.values = function() {
     return this._vals;
 }
-/** @constructor */
 function h$SetIter(s) {
     this._n = 0;
     this._s = s;
@@ -3453,22 +2784,12 @@ h$SetIter.prototype.peek = function() {
         return null;
     }
 }
-// remove the last element returned
 h$SetIter.prototype.remove = function() {
     if(!this._r) {
         this._s.remove(this._s._vals[--this._n]);
         this._r = true;
     }
 }
-/*
-  map, iteration restrictions are the same as for set
-  keys need to be objects with a unique _key property
-
-  keys are expected to have the same prototype
-
-  values may be anything (but note that the values array might have additional nulls)
-*/
-/** @constructor */
 function h$Map() {
     this._pairsKeys = [];
     this._pairsValues = [];
@@ -3522,15 +2843,12 @@ h$Map.prototype.get = function(k) {
 h$Map.prototype.iter = function() {
     return new h$MapIter(this);
 }
-// returned array might have some trailing nulls
 h$Map.prototype.keys = function () {
     return this._pairsKeys;
 }
-// returned array might have some trailing nulls
 h$Map.prototype.values = function() {
     return this._pairsValues;
 }
-/** @constructor */
 function h$MapIter(m) {
     this._n = 0;
     this._m = m;
@@ -3547,12 +2865,6 @@ h$MapIter.prototype.peek = function() {
 h$MapIter.prototype.peekVal = function() {
     return this._n < this._m._size ? this._m._pairsValues[this._n] : null;
 }
-/*
-  simple queue, returns null when empty
-  it's safe to enqueue new items while iterating, not safe to dequeue
-  (new items will not be iterated over)
-*/
-/** @constructor */
 function h$Queue() {
     var b = { b: [], n: null };
     this._blocks = 1;
@@ -3621,12 +2933,6 @@ h$Queue.prototype.iter = function() {
         }
     }
 }
-/*
-   binary min-heap / set
-   - iteration is not in order of priority
-   - values can be removed, need to have the ._key property
-*/
-/** @constructor */
 function h$HeapSet() {
     this._keys = [];
     this._prios = [];
@@ -3636,10 +2942,9 @@ function h$HeapSet() {
 h$HeapSet.prototype.size = function() {
     return this._size;
 }
-// add a node, if it already exists, it's moved to the new priority
 h$HeapSet.prototype.add = function(op,o) {
     var p = this._prios, k = this._keys, v = this._vals, x = k[o._key];
-    if(x !== undefined) { // adjust node
+    if(x !== undefined) {
         var oop = p[x];
         if(oop !== op) {
             p[x] = op;
@@ -3649,7 +2954,7 @@ h$HeapSet.prototype.add = function(op,o) {
                 this._downHeap(x, this._size);
             }
         }
-    } else { // new node
+    } else {
         var s = this._size++;
         k[o._key] = s;
         p[s] = op;
@@ -3693,7 +2998,6 @@ h$HeapSet.prototype.iter = function() {
         return n < s ? v[n++] : null;
     }
 }
-// may be longer than this.size(), remainder is filled with nulls
 h$HeapSet.prototype.values = function() {
     return this._vals;
 }
@@ -3751,71 +3055,10 @@ h$HeapSet.prototype._upHeap = function(i) {
         }
     }
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// #define GHCJS_TRACE_META 1
-// memory management and pointer emulation
-// static init, non-caf
 function h$sti(i,c,xs) {
     i.f = c;
     h$init_closure(i,xs);
 }
-// static init, caf
 function h$stc(i,c,xs) {
     i.f = c;
     h$init_closure(i,xs);
@@ -3831,25 +3074,11 @@ function h$stl(o, xs, t) {
             r = (h$c2(h$ghczmprimZCGHCziTypesziZC_con_e, (x), (r)));
         }
     }
-    // fixme direct object manip
     o.f = r.f;
     o.d1 = r.d1;
     o.d2 = r.d2;
     o.m = r.m;
 }
-// some utilities for constructing common objects from JS in the RTS or foreign code.
-// when profiling, the current ccs is assigned
-// #ifdef GHCJS_PROF
-// var h$nil = h$c(h$ghczmprimZCGHCziTypesziZMZN_con_e, h$CCS_SYSTEM);
-// #else
-// var h$nil = h$c(h$ghczmprimZCGHCziTypesziZMZN_con_e);
-// #endif
-// #ifdef GHCJS_PROF
-// var h$nothing = h$c(h$baseZCGHCziBaseziNothing_con_e, h$CCS_SYSTEM);
-// #else
-//var h$nothing = h$c(h$baseZCGHCziBaseziNothing_con_e);
-// #endif
-// delayed init for top-level closures
 var h$staticDelayed = [];
 function h$d() {
     var c = h$c(null);
@@ -3861,11 +3090,9 @@ function h$traceAlloc(x) {
     h$log("allocating: " + (++h$allocN));
     x.alloc = h$allocN;
 }
-// fixme remove this when we have a better way to immediately init these things
 function h$di(c) {
     h$staticDelayed.push(c);
 }
-// initialize global object to primitive value
 function h$p(x) {
     h$staticDelayed.push(x);
     return x;
@@ -3882,13 +3109,11 @@ function h$scheduleInit(entries, objs, lbls, infos, statics) {
         h$initInfoTables(d, entries, objs, lbls, infos, statics);
     });
 }
-// initialize packed info tables
-// see Gen2.Compactor for how the data is encoded
-function h$initInfoTables ( depth // depth in the base chain
-                          , funcs // array with all entry functions
-                          , objects // array with all the global heap objects
-                          , lbls // array with non-haskell labels
-                          , infoMeta // packed info
+function h$initInfoTables ( depth
+                          , funcs
+                          , objects
+                          , lbls
+                          , infoMeta
                           , infoStatic
                           ) {
   ;
@@ -3923,7 +3148,7 @@ function h$initInfoTables ( depth // depth in the base chain
     throw ("h$initInfoTables: invalid code in info table: " + c + " at " + pos)
   }
   function nextCh() {
-        return next(); // fixme map readable chars
+        return next();
   }
     function nextInt() {
         var n = next();
@@ -4022,7 +3247,6 @@ function h$initInfoTables ( depth // depth in the base chain
         case 7:
             ;
             isString = true;
-            // no break, strings are null temrinated UTF8 encoded binary with
         case 8:
             ;
             n = next();
@@ -4079,12 +3303,12 @@ function h$initInfoTables ( depth // depth in the base chain
     o = funcs[i];
     var ot;
     var oa = 0;
-    var oregs = 256; // one register no skip
+    var oregs = 256;
     switch(next()) {
-      case 0: // thunk
+      case 0:
         ot = 0;
         break;
-      case 1: // fun
+      case 1:
         ot = 1;
         var arity = next();
         var skipRegs = next()-1;
@@ -4094,11 +3318,11 @@ function h$initInfoTables ( depth // depth in the base chain
         oregs = (regs << 8) | skip;
         oa = arity + ((regs-1+skip) << 8);
         break;
-      case 2: // con
+      case 2:
         ot = 2;
         oa = next();
         break;
-      case 3: // stack frame
+      case 3:
         ot = -1;
         oa = 0;
         oregs = next() - 1;
@@ -4115,9 +3339,6 @@ function h$initInfoTables ( depth // depth in the base chain
           srt.push(nextObj());
       }
     }
-    // h$log("result: " + ot + " " + oa + " " + oregs + " [" + srt + "] " + size);
-    // h$log("orig: " + o.t + " " + o.a + " " + o.r + " [" + o.s + "] " + o.size);
-    // if(ot !== o.t || oa !== o.a || oregs !== o.r || size !== o.size) throw "inconsistent";
     o.t = ot;
     o.i = [];
     o.n = "";
@@ -4132,14 +3353,12 @@ function h$initInfoTables ( depth // depth in the base chain
     for(i=0;i<objects.length;i++) {
       ;
       o = objects[i];
-        // traceMetaObjBefore(o);
       var nx = next();
       ;
       switch(nx) {
-      case 0: // no init, could be a primitive value (still in the list since others might reference it)
-          // h$log("zero init");
+      case 0:
           break;
-      case 1: // staticfun
+      case 1:
           o.f = nextEntry();
         ;
         n = next();
@@ -4159,7 +3378,7 @@ function h$initInfoTables ( depth // depth in the base chain
           }
         }
           break;
-      case 2: // staticThunk
+      case 2:
           ;
         o.f = nextEntry();
         n = next();
@@ -4180,19 +3399,19 @@ function h$initInfoTables ( depth // depth in the base chain
         }
           h$addCAF(o);
           break;
-      case 3: // staticPrim false, no init
+      case 3:
           ;
           break;
-      case 4: // staticPrim true, no init
+      case 4:
           ;
           break;
       case 5:
           ;
           break;
-      case 6: // staticString
+      case 6:
           ;
           break;
-      case 7: // staticBin
+      case 7:
           ;
           n = next();
           var b = h$newByteArray(n);
@@ -4200,11 +3419,11 @@ function h$initInfoTables ( depth // depth in the base chain
               b.u8[j] = next();
           }
           break;
-      case 8: // staticEmptyList
+      case 8:
           ;
           o.f = h$ghczmprimZCGHCziTypesziZMZN_con_e;
           break;
-      case 9: // staticList
+      case 9:
           ;
           n = next();
           var hasTail = next();
@@ -4217,7 +3436,7 @@ function h$initInfoTables ( depth // depth in the base chain
           o.d1 = c.d1;
           o.d2 = c.d2;
           break;
-      case 10: // staticData n args
+      case 10:
           ;
           n = next();
           ;
@@ -4226,42 +3445,40 @@ function h$initInfoTables ( depth // depth in the base chain
               h$setField(o, j, nextArg());
           }
           break;
-      case 11: // staticData 0 args
+      case 11:
           ;
           o.f = nextEntry();
           break;
-      case 12: // staticData 1 args
+      case 12:
           ;
           o.f = nextEntry();
           o.d1 = nextArg();
           break;
-      case 13: // staticData 2 args
+      case 13:
           ;
           o.f = nextEntry();
           o.d1 = nextArg();
           o.d2 = nextArg();
           break;
-      case 14: // staticData 3 args
+      case 14:
           ;
           o.f = nextEntry();
           o.d1 = nextArg();
-          // should be the correct order
           o.d2 = { d1: nextArg(), d2: nextArg()};
           break;
-      case 15: // staticData 4 args
+      case 15:
           ;
           o.f = nextEntry();
           o.d1 = nextArg();
-          // should be the correct order
           o.d2 = { d1: nextArg(), d2: nextArg(), d3: nextArg() };
           break;
-      case 16: // staticData 5 args
+      case 16:
           ;
           o.f = nextEntry();
           o.d1 = nextArg();
           o.d2 = { d1: nextArg(), d2: nextArg(), d3: nextArg(), d4: nextArg() };
           break;
-      case 17: // staticData 6 args
+      case 17:
           ;
           o.f = nextEntry();
           o.d1 = nextArg();
@@ -4279,7 +3496,6 @@ function h$initPtrLbl(isFun, lbl) {
 function h$callDynamic(f) {
     return f.apply(f, Array.prototype.slice.call(arguments, 2));
 }
-// slice an array of heap objects
 function h$sliceArray(a, start, n) {
   var r = a.slice(start, start+n);
   r.__ghcjsArray = true;
@@ -4287,7 +3503,7 @@ function h$sliceArray(a, start, n) {
   return r;
 }
 function h$memcpy() {
-  if(arguments.length === 3) { // ByteArray# -> ByteArray# copy
+  if(arguments.length === 3) {
     var dst = arguments[0];
     var src = arguments[1];
     var n = arguments[2];
@@ -4295,7 +3511,7 @@ function h$memcpy() {
       dst.u8[i] = src.u8[i];
     }
     { h$ret1 = (0); return (dst); };
-  } else if(arguments.length === 5) { // Addr# -> Addr# copy
+  } else if(arguments.length === 5) {
     var dst = arguments[0];
     var dst_off = arguments[1]
     var src = arguments[2];
@@ -4309,7 +3525,6 @@ function h$memcpy() {
     throw "h$memcpy: unexpected argument";
   }
 }
-// note: only works for objects bigger than two!
 function h$setField(o,n,v) {
     if(n > 0 && !o.d2) o.d2 = {};
     switch(n) {
@@ -4641,7 +3856,7 @@ function h$setField(o,n,v) {
         o.d2.d107 = v;
         return;
     default:
-        o.d2["d"+n] = v; // this requires all.js.externs for closure compiler!
+        o.d2["d"+n] = v;
     }
 }
 function h$mkSelThunk(r, f, rf) {
@@ -4657,7 +3872,6 @@ function h$mkSelThunk(r, f, rf) {
 function h$mkExportDyn(t, f) {
     h$log("making dynamic export: " + t);
     h$log("haskell fun: " + f + " " + h$collectProps(f));
-    // fixme register things, global static data
     var ff = function() {
         h$log("running some haskell for you");
         return 12;
@@ -4702,6 +3916,7 @@ function h$newByteArray(len) {
          , f3: new Float32Array(buf)
          , f6: new Float64Array(buf)
          , dv: new DataView(buf)
+         , m: 0
          }
 }
 function h$resizeMutableByteArray(a, n) {
@@ -4716,12 +3931,6 @@ function h$resizeMutableByteArray(a, n) {
   }
   return r
 }
-/*
-  This implementation does not perform in-place shrinking of the byte array.
-  It only reuses the original byte array if the new given length is exactly
-  equal to old length. This implementation matches the expected semantics
-  for this primitive, but it is probably possible to make this more efficient.
- */
 function h$shrinkMutableByteArray(a, n) {
   if(a.len !== n) {
     var r = h$newByteArray(n);
@@ -4747,34 +3956,6 @@ function h$compareByteArrays(a1,o1,a2,o2,n) {
   }
   return 0;
 }
-/*
-  Unboxed arrays in GHC use the ByteArray# and MutableByteArray#
-  primitives. In GHCJS these primitives are represented by an
-  object that contains a JavaScript ArrayBuffer and several views
-  (typed arrays) on that buffer.
-
-  Usually you can use GHCJS.Foreign.wrapBuffer and
-  GHCJS.Foreign.wrapMutableBuffer to do the conversion. If you need
-  more control or lower level acces, read on.
-
-  You can use h$wrapBuffer to wrap any JavaScript ArrayBuffer
-  into such an object, without copying the buffer. Since typed array
-  access is aligned, not all views are available
-  if the offset of the buffer is not a multiple of 8.
-
-  Since IO has kind * -> *, you cannot return IO ByteArray#
-  from a foreign import, even with the UnliftedFFITypes
-  extension. Return a JSVal instead and use unsafeCoerce
-  to convert it to a Data.Primitive.ByteArray.ByteArray or
-  Data.Primitive.ByteArray.MutableByteArray (primitive package)
-  and pattern match on the constructor to get the
-  primitive value out.
-
-  These types have the same runtime representation (a data
-  constructor with one regular (one JavaScript variable)
-  field) as a JSVal, so the conversion is safe, as long
-  as everything is fully evaluated.
-*/
 function h$wrapBuffer(buf, unalignedOk, offset, length) {
   if(!unalignedOk && offset && offset % 8 !== 0) {
     throw ("h$wrapBuffer: offset not aligned:" + offset);
@@ -4815,14 +3996,7 @@ function h$comparePointer(a1,o1,a2,o2) {
   else
     return i1 < i2 ? -1 : 1;
 }
-/*
-   A StableName is represented as either a h$StableName object (for most heap objects)
-   or a number (for heap objects with unboxed representation)
-
-   Holding on to a StableName does not keep the original object alive.
- */
 var h$stableNameN = 1;
-/** @constructor */
 function h$StableName(m) {
   this.m = m;
   this.s = null;
@@ -4850,7 +4024,7 @@ function h$makeStableName(x) {
 }
 function h$stableNameInt(s) {
   if(typeof s === 'number') {
-    if(s!=s) return 999999; // NaN
+    if(s!=s) return 999999;
     var s0 = s|0;
     if(s0 === s) return s0;
     h$convertDouble[0] = s;
@@ -4864,22 +4038,25 @@ function h$stableNameInt(s) {
   }
 }
 function h$eqStableName(s1o,s2o) {
-  if(s1o!=s1o && s2o!=s2o) return 1; // NaN
+  if(s1o!=s1o && s2o!=s2o) return 1;
   return s1o === s2o ? 1 : 0;
 }
 function h$malloc(n) {
   { h$ret1 = (0); return (h$newByteArray(n)); };
+}
+function h$calloc(n,size) {
+  { h$ret1 = (0); return (h$newByteArray(n*size)); };
 }
 function h$free() {
 }
 function h$memset() {
   var buf_v, buf_off, chr, n;
   buf_v = arguments[0];
-  if(arguments.length == 4) { // Addr#
+  if(arguments.length == 4) {
     buf_off = arguments[1];
     chr = arguments[2];
     n = arguments[3];
-  } else if(arguments.length == 3) { // ByteString#
+  } else if(arguments.length == 3) {
     buf_off = 0;
     chr = arguments[1];
     n = arguments[2];
@@ -4920,11 +4097,9 @@ function h$mkFunctionPtr(f) {
 }
 var h$freeHaskellFunctionPtr = function () {
 }
-// extra roots for the heap scanner: objects with root property
 var h$extraRootsN = 0;
 var h$extraRoots = new h$Set();
 function h$addExtraRoot() {
-  // fixme
 }
 function h$makeCallback(f, extraArgs, action) {
     var args = extraArgs.slice(0);
@@ -5006,63 +4181,106 @@ function h$munmap(addr_d, addr_o, size) {
   }
   return 0;
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
+function h$pdep8(src, mask) {
+  var bit, k = 0, dst = 0;
+  for(bit=0;bit<8;bit++) {
+    if((mask & (1 << bit)) !== 0) {
+      dst |= ((src >>> k) & 1) << bit;
+      k++;
+    }
+  }
+  return dst;
+}
+function h$pdep16(src, mask) {
+  var bit, k = 0, dst = 0;
+  for(bit=0;bit<16;bit++) {
+    if((mask & (1 << bit)) !== 0) {
+      dst |= ((src >>> k) & 1) << bit;
+      k++;
+    }
+  }
+  return dst;
+}
+function h$pdep32(src, mask) {
+  var bit, k = 0, dst = 0;
+  for(bit=0;bit<32;bit++) {
+    if((mask & (1 << bit)) !== 0) {
+      dst |= ((src >>> k) & 1) << bit;
+      k++;
+    }
+  }
+  return dst;
+}
+function h$pdep64(src_b, src_a, mask_b, mask_a) {
+ var bit, k = 0, dst_a = 0, dst_b = 0;
+ for(bit=0;bit<32;bit++) {
+   if((mask_a & (1 << bit)) !== 0) {
+     dst_a |= ((src_a >>> k) & 1) << bit;
+     k++;
+   }
+ }
+ for(bit=0;bit<32;bit++) {
+   if((mask_b & (1 << bit)) !== 0) {
+     if(k >= 32) {
+       dst_b |= ((src_b >>> (k - 32)) & 1) << bit;
+     } else {
+       dst_b |= ((src_a >>> k) & 1) << bit;
+     }
+     k++;
+   }
+ }
+ { h$ret1 = (dst_a); return (dst_b); };
+}
+function h$pext8(src, mask) {
+  var bit, k = 0, dst = 0;
+  for(bit=0;bit<8;bit++) {
+    if((mask & (1 << bit)) !== 0) {
+      dst |= ((src >>> bit) & 1) << k;
+      k++;
+    }
+  }
+  return dst;
+}
+function h$pext16(src, mask) {
+  var bit, k = 0, dst = 0;
+  for(bit=0;bit<16;bit++) {
+    if((mask & (1 << bit)) !== 0) {
+      dst |= ((src >>> bit) & 1) << k;
+      k++;
+    }
+  }
+  return dst;
+}
+function h$pext32(src, mask) {
+  var bit, k = 0, dst = 0;
+  for(bit=0;bit<32;bit++) {
+    if((mask & (1 << bit)) !== 0) {
+      dst |= ((src >>> bit) & 1) << k;
+      k++;
+    }
+  }
+  return dst;
+}
+function h$pext64(src_b, src_a, mask_b, mask_a) {
+ var bit, k = 0, dst_a = 0, dst_b = 0;
+ for(bit=0;bit<32;bit++) {
+   if((mask_a & (1 << bit)) !== 0) {
+     dst_a |= ((src_a >>> bit) & 1) << k;
+     k++;
+   }
+ }
+ for(bit=0;bit<32;bit++) {
+   if((mask_b & (1 << bit)) !== 0) {
+     if(k >= 32) {
+       dst_b |= ((src_b >>> bit) & 1) << (k-32);
+     } else {
+       dst_a |= ((src_b >>> bit) & 1) << k;
+     }
+     k++;
+   }
+ }
+ { h$ret1 = (dst_a); return (dst_b); };
+}
 function h$compactNew(size) {
   ;
   throw new Error("not implemented");
@@ -5089,13 +4307,11 @@ function h$compactGetNextBlock(compact, blocka, blokco) {
 function h$compactAllocateBlock(size, suggesta, suggesto) {
   ;
   throw new Error("not implemented");
-  // returns new root address
   { h$ret1 = (0); return (null); };
 }
 function h$compactFixupPointers(blocka, blocko, roota, rooto) {
   ;
   throw new Error("not implemented");
-  // returns new root address
   { h$ret1 = (0); return (null); };
 }
 function h$compactAdd(compact, obj) {
@@ -5110,186 +4326,47 @@ function h$compactCompactSize(compact) {
   ;
   return 0;
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/*
-  Do garbage collection where the JavaScript GC doesn't suffice or needs some help:
-
-  - run finalizers for weak references
-  - find unreferenced CAFs and reset them (unless h$retainCAFs is set)
-  - shorten stacks that are mostly empty
-  - reset unused parts of stacks to null
-  - reset registers to null
-  - reset return variables to null
-  - throw exceptions to threads that are blocked on an unreachable MVar/STM transaction
-  - drop unnecessary references for selector thunks
-
-  The gc uses the .m field to store its mark in all the objects it marks. for heap objects,
-  the .m field is also used for other things, like stable names, the gc only changes
-  the two least significant bits for these.
-
-  The gc starts with all threads as roots in addition to callbacks passed to JavaScript
-  that that are retained. If you have custom JavaScript data structures that contain
-  Haskell heap object references, you can use extensible retention to find these
-  references and add thm to the work queue. h$registerExtensibleRetensionRoot(f) calls
-  f(currentMark) at the start of every gc, h$registerExtensibleRetention(f) calls f(o, currentMark)
-  for every unknown object found on the Haskell heap.
-
-  Extensible retention is a low-level mechanism and should typically only be used by
-  bindings that guarantee that the shape of the JS objects exactly matches what
-  the scanner expects. Care should be taken to make sure that the objects never
-  escape the reach of the scanner.
-
-  Having correct reachability information is important, even if you choose to turn off
-  features like weak references and deallocating CAFs in production, since it helps
-  debugging by providing the profiler with accurate data and by properly raising
-  exceptions when threads become blocked indefinitely, usually indicating a bug or
-  memory leak.
-
-  assumptions:
-  - all threads suspended, no active registers
-  - h$currentThread == null or at least unused:
-       1. all reachable threads must be in h$threads or h$blocked
-       2. no registers contain any usable value
-  notes:
-  - gc() may replace the stack of any thread, make sure to reload h$stack after gc()
-*/
-/*
-  fixme, todo:
-  - mark posted exceptions to thread
-*/
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// these macros use a local mark variable
-var h$gcMark = 2; // 2 or 3 (objects initialized with 0)
+var h$gcMark = 2;
 var h$retainCAFs = false;
 var h$CAFs = [];
 var h$CAFsReset = [];
-// 
 var h$extensibleRetentionRoots = [];
 var h$extensibleRetentionCallbacks = [];
-/*
-   after registering an extensible extension root f,
-   f(currentMark) is called at the start of each gc invocation and is
-   expected to return an array with Haskell heap objects
-   to be treated as extra roots.
- */
 function h$registerExtensibleRetentionRoot(f) {
     h$extensibleRetentionRoots.push(f);
 }
 function h$unregisterExtensibleRetentionRoot(f) {
     h$extensibleRetentionRoots = h$extensibleRetentionRoots.filter(function(g) { return f !== g; });
 }
-/*
-  after registering an extensible retention callback f,
-  f(o, currentMark) is called for every unknown object encountered on the
-  Haskell heap. f should return an array with found objects. If no objects
-  are found, f should return a boolean indicating whether the gc should skip
-  processing the objects with other extensible retention callbacks.
-
-  The gc may encounter the same object multiple times during the same scan,
-  so a callback should attempt to quickly return if the object has been scanned
-  already.
-
-   return value:
-     - array          scan objects contained in array, do not call other extension callbacks
-     - true           do not call other extension callbacks with this object
-     - false          call other extension callbacks with this object
-
-  Use -DGHCJS_TRACE_GC_UNKNOWN to find the JavaScript objects reachable
-  (through JSVal) on the Haskell heap for which none of the registered
-  extensible retention callbacks has returned true or an array.
- */
 function h$registerExtensibleRetention(f) {
     h$extensibleRetentionCallbacks.push(f);
 }
 function h$unregisterExtensibleRetention(f) {
     h$extensibleRetentionCallbacks = h$extensibleRetentionCallbacks.filter(function(g) { return f !== g; });
 }
-// check whether the object is marked by the latest gc
 function h$isMarked(obj) {
   return (typeof obj === 'object' || typeof obj === 'function') &&
         ((typeof obj.m === 'number' && (obj.m & 3) === h$gcMark) || (obj.m && typeof obj.m === 'object' && obj.m.m === h$gcMark));
 }
-// do a quick gc of a thread:
-// - reset the stack (possibly shrinking storage for it)
-// - reset all global data
-// checks all known threads if t is null, but not h$currentThread
 function h$gcQuick(t) {
     if(h$currentThread !== null) throw "h$gcQuick: GC can only run when no thread is running";
     h$resetRegisters();
     h$resetResultVars();
     var i;
-    if(t !== null) { // reset specified threads
-        if(t instanceof h$Thread) { // only thread t
+    if(t !== null) {
+        if(t instanceof h$Thread) {
             h$resetThread(t);
-        } else { // assume it's an array
+        } else {
             for(var i=0;i<t.length;i++) h$resetThread(t[i]);
         }
-    } else { // all threads, h$currentThread assumed unused
+    } else {
         var nt, runnable = h$threads.iter();
         while((nt = runnable()) !== null) h$resetThread(nt);
         var iter = h$blocked.iter();
         while((nt = iter.next()) !== null) h$resetThread(nt);
     }
 }
-// run full marking for threads in h$blocked and h$threads, optionally t if t /= null
 function h$gc(t) {
-    // fixme, should enable again later when proper CAF management
-    // and retention of the standard handles in GHCJSi work
     if(h$isGHCJSi) return;
     if(h$currentThread !== null) throw "h$gc: GC can only be run when no thread is running";
     ;
@@ -5303,7 +4380,6 @@ function h$gc(t) {
       if(a) h$follow(a, a.length-1);
     }
     ;
-    // mark al runnable threads and the running thread
     if(t !== null) {
  h$markThread(t);
  h$resetThread(t);
@@ -5313,9 +4389,6 @@ function h$gc(t) {
  h$markThread(nt);
  h$resetThread(nt);
     }
-    // some blocked threads are always considered reachable, mark them
-    //   - delayed threads
-    //   - threads blocked on async FFI
     var iter = h$blocked.iter();
     while((nt = iter.next()) !== null) {
         if(nt.delayed ||
@@ -5331,14 +4404,13 @@ function h$gc(t) {
     for(i=0;i<h$stablePtrData.length;i++) {
       if(h$stablePtrData[i]) h$follow(h$stablePtrData[i]);
     }
-    // clean up threads waiting on unreachable synchronization primitives
     h$resolveDeadlocks();
-    // clean up unreachable weak refs
     var toFinalize = h$markRetained();
     h$finalizeWeaks(toFinalize);
-    h$finalizeCAFs(); // restore all unreachable CAFs to unevaluated state
+    h$finalizeCAFs();
     var now = Date.now();
     h$lastGc = now;
+    h$debugAlloc_verifyReachability(h$gcMark);
 }
 function h$markWeaks() {
   var i, w, marked, mark = h$gcMark;
@@ -5363,18 +4435,12 @@ function h$markRetained() {
     var iter, marked, w, i, mark = h$gcMark;
     var newList = [];
     var toFinalize = [];
-    /*
-      2. Scan the Weak Pointer List. If a weak pointer object has a key that is
-      marked (i.e. reachable), then mark all heap reachable from its value
-      or its finalizer, and move the weak pointer object to a new list
-    */
     do {
         ;
         marked = false;
         for (i = 0; i < h$weakPointerList.length; ++i) {
             w = h$weakPointerList[i];
             if (w === null) {
-                // don't handle items deleted in earlier iteration
                 continue;
             }
             if (((w.keym.m & 3) === mark)) {
@@ -5385,28 +4451,14 @@ function h$markRetained() {
                     h$follow(w.finalizer);
                 }
                 newList.push(w);
-                // instead of removing the item from the h$weakpointerList
-                // we set it to null if we push it to newList.
                 h$weakPointerList[i] = null;
                 marked = true;
             }
         }
-        /*
-           3. Repeat from step (2), until a complete scan of Weak Pointer List finds
-              no weak pointer object with a marked keym.
-        */
     } while(marked);
-    /*
-      4. Scan the Weak Pointer List again. If the weak pointer object is reachable
-         then tombstone it. If the weak pointer object has a finalizer then move
-         it to the Finalization Pending List, and mark all the heap reachable
-         from the finalizer. If the finalizer refers to the key (and/or value),
-         this step will "resurrect" it.
-    */
     for (i = 0; i < h$weakPointerList.length; ++i) {
         w = h$weakPointerList[i];
         if (w === null) {
-            // don't handle items deleted in step 2
             continue;
         }
         ;
@@ -5421,12 +4473,7 @@ function h$markRetained() {
             toFinalize.push(w);
         }
     }
-    /*
-       5. The list accumulated in step (3) becomes the new Weak Pointer List.
-          Mark any unreachable weak pointer objects on this list as reachable.
-    */
     h$weakPointerList = newList;
-    // marking the weak pointer objects as reachable is not necessary
     return toFinalize;
 }
 function h$markThread(t) {
@@ -5435,21 +4482,14 @@ function h$markThread(t) {
     if(((typeof t.m === 'number' && (t.m & 3) === mark) || (typeof t.m === 'object' && ((t.m.m & 3) === mark)))) return;
     h$follow(t);
 }
-// big object, not handled by 0..7 cases
-// keep out of h$follow to prevent deopt
 function h$followObjGen(c, work, w) {
    work[w++] = c.d1;;
    var d = c.d2;
    for(var x in d) {
-//              if(d.hasOwnProperty(x)) {
      work[w++] = d[x];;
-//              }
    }
     return w;
 }
-// follow all references in the object obj and mark them with the current mark
-// if sp is a number, obj is assumed to be an array for which indices [0..sp] need
-// to be followed (used for thread stacks)
 function h$follow(obj, sp) {
     var i, ii, iter, c, work, w;
     ;
@@ -5471,9 +4511,7 @@ function h$follow(obj, sp) {
             ;
             if(typeof cf === 'function' && (typeof c.m === 'number' || typeof c.m === 'object')) {
                 ;
-                // only change the two least significant bits for heap objects
                 if(typeof c.m === 'number') c.m = (c.m&-4)|mark; else c.m.m = (c.m.m & -4)|mark;;
-                // dynamic references
                 var d = c.d2;
                 switch(cf.size) {
                 case 0: break;
@@ -5491,12 +4529,14 @@ function h$follow(obj, sp) {
                 case 12: var d12=c.d2; { work[w++] = c.d1; work[w++] = d12.d1; work[w++] = d12.d2; work[w++] = d12.d3; }; { work[w++] = d12.d4; work[w++] = d12.d5; work[w++] = d12.d6; work[w++] = d12.d7; }; { work[w++] = d12.d8; work[w++] = d12.d9; work[w++] = d12.d10; work[w++] = d12.d11; }; break;
                 default: w = h$followObjGen(c,work,w);
                 }
-                // static references
                 var s = cf.s;
                 if(s !== null) {
                     ;
                     for(var i=0;i<s.length;i++) work[w++] = s[i];;
                 }
+            } else if(typeof c.len === 'number' && c.buf instanceof ArrayBuffer) {
+                ;
+                if(typeof c.m === 'number') c.m = (c.m&-4)|mark; else c.m.m = (c.m.m & -4)|mark;;
             } else if(c instanceof h$Weak) {
                 if(typeof c.m === 'number') c.m = (c.m&-4)|mark; else c.m.m = (c.m.m & -4)|mark;;
             } else if(c instanceof h$MVar) {
@@ -5504,8 +4544,8 @@ function h$follow(obj, sp) {
                 if(typeof c.m === 'number') c.m = (c.m&-4)|mark; else c.m.m = (c.m.m & -4)|mark;;
                 iter = c.writers.iter();
                 while((ii = iter()) !== null) {
-      work[w++] = ii[1];; // value
-      work[w++] = ii[0];; // thread
+      work[w++] = ii[1];;
+      work[w++] = ii[0];;
   }
   iter = c.readers.iter();
   while((ii = iter()) !== null) {
@@ -5547,8 +4587,6 @@ function h$follow(obj, sp) {
       work[w++] = c.excep[i];;
   }
             } else if(c instanceof h$Transaction) {
-                // - the accessed TVar values don't need to be marked
-                // - parents are also on the stack, so they should've been marked already
                 ;
                 if(typeof c.m === 'number') c.m = (c.m&-4)|mark; else c.m.m = (c.m.m & -4)|mark;;
                 for(i=c.invariants.length-1;i>=0;i--) {
@@ -5560,7 +4598,6 @@ function h$follow(obj, sp) {
       work[w++] = ii.val;;
   }
             } else if(c instanceof Array && c.__ghcjsArray) {
-  // only for Haskell arrays with lifted values
                 if(typeof c.m === 'number') c.m = (c.m&-4)|mark; else c.m.m = (c.m.m & -4)|mark;;
                 ;
                 for(i=0;i<c.length;i++) {
@@ -5581,14 +4618,11 @@ function h$follow(obj, sp) {
                     }
                     break;
                 }
-            } // otherwise: not an object, no followable values
+            }
         }
     }
     ;
 }
-// resetThread clears the stack above the stack pointer
-// and shortens the stack array if there is too much
-// unused space
 function h$resetThread(t) {
     var stack = t.stack;
     if(!stack) return;
@@ -5602,37 +4636,24 @@ function h$resetThread(t) {
     }
     ;
 }
-/*
-   Post exceptions to all threads that are waiting on an unreachable synchronization
-   object and haven't been marked reachable themselves.
-
-   All woken up threads are marked.
- */
 function h$resolveDeadlocks() {
     ;
     var kill, t, iter, bo, mark = h$gcMark;
     do {
         h$markWeaks();
-        // deal with unreachable blocked threads: kill an unreachable thread and restart the process
         kill = null;
         iter = h$blocked.iter();
         while((t = iter.next()) !== null) {
-            // we're done if the thread is already reachable
             if(((typeof t.m === 'number' && (t.m & 3) === mark) || (typeof t.m === 'object' && ((t.m.m & 3) === mark)))) continue;
-            // check what we're blocked on
             bo = t.blockedOn;
             if(bo instanceof h$MVar) {
-                // blocked on MVar
                 if(bo.m === mark) throw "assertion failed: thread should have been marked";
-                // MVar unreachable
                 kill = h$ghcjszmprimZCGHCJSziPrimziInternalziblockedIndefinitelyOnMVar;
                 break;
             } else if(t.blockedOn instanceof h$TVarsWaiting) {
-                // blocked in STM transaction
                 kill = h$ghcjszmprimZCGHCJSziPrimziInternalziblockedIndefinitelyOnSTM;
                 break;
             } else {
-                // blocked on something else, we can't do anything
             }
         }
         if(kill) {
@@ -5641,12 +4662,10 @@ function h$resolveDeadlocks() {
         }
     } while(kill);
 }
-// register a CAF (after initialising the heap object)
 function h$addCAF(o) {
   h$CAFs.push(o);
   h$CAFsReset.push([o.f, o.d1, o.d2]);
 }
-// reset unreferenced CAFs to their initial value
 function h$finalizeCAFs() {
     if(h$retainCAFs) return;
     var mark = h$gcMark;
@@ -5654,7 +4673,7 @@ function h$finalizeCAFs() {
         var c = h$CAFs[i];
         if(c.m & 3 !== mark) {
             var cr = h$CAFsReset[i];
-            if(c.f !== cr[0]) { // has been updated, reset it
+            if(c.f !== cr[0]) {
                 ;
                 c.f = cr[0];
                 c.d1 = cr[1];
@@ -5664,309 +4683,6 @@ function h$finalizeCAFs() {
     }
     ;
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-/* include/HsBaseConfig.h.  Generated from HsBaseConfig.h.in by configure.  */
-/* include/HsBaseConfig.h.in.  Generated from configure.ac by autoheader.  */
-/* The value of E2BIG. */
-/* The value of EACCES. */
-/* The value of EADDRINUSE. */
-/* The value of EADDRNOTAVAIL. */
-/* The value of EADV. */
-/* The value of EAFNOSUPPORT. */
-/* The value of EAGAIN. */
-/* The value of EALREADY. */
-/* The value of EBADF. */
-/* The value of EBADMSG. */
-/* The value of EBADRPC. */
-/* The value of EBUSY. */
-/* The value of ECHILD. */
-/* The value of ECOMM. */
-/* The value of ECONNABORTED. */
-/* The value of ECONNREFUSED. */
-/* The value of ECONNRESET. */
-/* The value of EDEADLK. */
-/* The value of EDESTADDRREQ. */
-/* The value of EDIRTY. */
-/* The value of EDOM. */
-/* The value of EDQUOT. */
-/* The value of EEXIST. */
-/* The value of EFAULT. */
-/* The value of EFBIG. */
-/* The value of EFTYPE. */
-/* The value of EHOSTDOWN. */
-/* The value of EHOSTUNREACH. */
-/* The value of EIDRM. */
-/* The value of EILSEQ. */
-/* The value of EINPROGRESS. */
-/* The value of EINTR. */
-/* The value of EINVAL. */
-/* The value of EIO. */
-/* The value of EISCONN. */
-/* The value of EISDIR. */
-/* The value of ELOOP. */
-/* The value of EMFILE. */
-/* The value of EMLINK. */
-/* The value of EMSGSIZE. */
-/* The value of EMULTIHOP. */
-/* The value of ENAMETOOLONG. */
-/* The value of ENETDOWN. */
-/* The value of ENETRESET. */
-/* The value of ENETUNREACH. */
-/* The value of ENFILE. */
-/* The value of ENOBUFS. */
-/* The value of ENOCIGAR. */
-/* The value of ENODATA. */
-/* The value of ENODEV. */
-/* The value of ENOENT. */
-/* The value of ENOEXEC. */
-/* The value of ENOLCK. */
-/* The value of ENOLINK. */
-/* The value of ENOMEM. */
-/* The value of ENOMSG. */
-/* The value of ENONET. */
-/* The value of ENOPROTOOPT. */
-/* The value of ENOSPC. */
-/* The value of ENOSR. */
-/* The value of ENOSTR. */
-/* The value of ENOSYS. */
-/* The value of ENOTBLK. */
-/* The value of ENOTCONN. */
-/* The value of ENOTDIR. */
-/* The value of ENOTEMPTY. */
-/* The value of ENOTSOCK. */
-/* The value of ENOTSUP. */
-/* The value of ENOTTY. */
-/* The value of ENXIO. */
-/* The value of EOPNOTSUPP. */
-/* The value of EPERM. */
-/* The value of EPFNOSUPPORT. */
-/* The value of EPIPE. */
-/* The value of EPROCLIM. */
-/* The value of EPROCUNAVAIL. */
-/* The value of EPROGMISMATCH. */
-/* The value of EPROGUNAVAIL. */
-/* The value of EPROTO. */
-/* The value of EPROTONOSUPPORT. */
-/* The value of EPROTOTYPE. */
-/* The value of ERANGE. */
-/* The value of EREMCHG. */
-/* The value of EREMOTE. */
-/* The value of EROFS. */
-/* The value of ERPCMISMATCH. */
-/* The value of ERREMOTE. */
-/* The value of ESHUTDOWN. */
-/* The value of ESOCKTNOSUPPORT. */
-/* The value of ESPIPE. */
-/* The value of ESRCH. */
-/* The value of ESRMNT. */
-/* The value of ESTALE. */
-/* The value of ETIME. */
-/* The value of ETIMEDOUT. */
-/* The value of ETOOMANYREFS. */
-/* The value of ETXTBSY. */
-/* The value of EUSERS. */
-/* The value of EWOULDBLOCK. */
-/* The value of EXDEV. */
-/* The value of O_BINARY. */
-/* The value of SIGINT. */
-/* Define to 1 if you have the `clock_gettime' function. */
-/* Define to 1 if you have the <ctype.h> header file. */
-/* Define if you have epoll support. */
-/* #undef HAVE_EPOLL */
-/* Define to 1 if you have the `epoll_ctl' function. */
-/* #undef HAVE_EPOLL_CTL */
-/* Define to 1 if you have the <errno.h> header file. */
-/* Define to 1 if you have the `eventfd' function. */
-/* #undef HAVE_EVENTFD */
-/* Define to 1 if you have the <fcntl.h> header file. */
-/* Define if you have flock support. */
-/* Define to 1 if you have the `ftruncate' function. */
-/* Define to 1 if you have the `getclock' function. */
-/* #undef HAVE_GETCLOCK */
-/* Define to 1 if you have the `getrusage' function. */
-/* Define to 1 if you have the <inttypes.h> header file. */
-/* Define to 1 if you have the `iswspace' function. */
-/* Define to 1 if you have the `kevent' function. */
-/* Define to 1 if you have the `kevent64' function. */
-/* Define if you have kqueue support. */
-/* Define to 1 if you have the <langinfo.h> header file. */
-/* Define to 1 if you have libcharset. */
-/* Define to 1 if you have the `rt' library (-lrt). */
-/* #undef HAVE_LIBRT */
-/* Define to 1 if you have the <limits.h> header file. */
-/* Define to 1 if the system has the type `long long'. */
-/* Define to 1 if you have the `lstat' function. */
-/* Define to 1 if you have the <memory.h> header file. */
-/* Define if you have open file descriptor lock support. */
-/* #undef HAVE_OFD_LOCKING */
-/* Define if you have poll support. */
-/* Define to 1 if you have the <poll.h> header file. */
-/* Define to 1 if you have the <signal.h> header file. */
-/* Define to 1 if you have the <stdint.h> header file. */
-/* Define to 1 if you have the <stdlib.h> header file. */
-/* Define to 1 if you have the <strings.h> header file. */
-/* Define to 1 if you have the <string.h> header file. */
-/* Define to 1 if you have the <sys/epoll.h> header file. */
-/* #undef HAVE_SYS_EPOLL_H */
-/* Define to 1 if you have the <sys/eventfd.h> header file. */
-/* #undef HAVE_SYS_EVENTFD_H */
-/* Define to 1 if you have the <sys/event.h> header file. */
-/* Define to 1 if you have the <sys/file.h> header file. */
-/* Define to 1 if you have the <sys/resource.h> header file. */
-/* Define to 1 if you have the <sys/select.h> header file. */
-/* Define to 1 if you have the <sys/stat.h> header file. */
-/* Define to 1 if you have the <sys/syscall.h> header file. */
-/* Define to 1 if you have the <sys/timeb.h> header file. */
-/* Define to 1 if you have the <sys/timers.h> header file. */
-/* #undef HAVE_SYS_TIMERS_H */
-/* Define to 1 if you have the <sys/times.h> header file. */
-/* Define to 1 if you have the <sys/time.h> header file. */
-/* Define to 1 if you have the <sys/types.h> header file. */
-/* Define to 1 if you have the <sys/utsname.h> header file. */
-/* Define to 1 if you have the <sys/wait.h> header file. */
-/* Define to 1 if you have the <termios.h> header file. */
-/* Define to 1 if you have the `times' function. */
-/* Define to 1 if you have the <time.h> header file. */
-/* Define to 1 if you have the <unistd.h> header file. */
-/* Define to 1 if you have the `unsetenv' function. */
-/* Define to 1 if you have the <utime.h> header file. */
-/* Define to 1 if you have the <wctype.h> header file. */
-/* Define to 1 if you have the <windows.h> header file. */
-/* #undef HAVE_WINDOWS_H */
-/* Define to 1 if you have the <winsock.h> header file. */
-/* #undef HAVE_WINSOCK_H */
-/* Define to 1 if you have the `_chsize' function. */
-/* #undef HAVE__CHSIZE */
-/* Define to Haskell type for blkcnt_t */
-/* Define to Haskell type for blksize_t */
-/* Define to Haskell type for bool */
-/* Define to Haskell type for cc_t */
-/* Define to Haskell type for char */
-/* Define to Haskell type for clock_t */
-/* Define to Haskell type for dev_t */
-/* Define to Haskell type for double */
-/* Define to Haskell type for float */
-/* Define to Haskell type for fsblkcnt_t */
-/* Define to Haskell type for fsfilcnt_t */
-/* Define to Haskell type for gid_t */
-/* Define to Haskell type for id_t */
-/* Define to Haskell type for ino_t */
-/* Define to Haskell type for int */
-/* Define to Haskell type for intmax_t */
-/* Define to Haskell type for intptr_t */
-/* Define to Haskell type for long */
-/* Define to Haskell type for long long */
-/* Define to Haskell type for mode_t */
-/* Define to Haskell type for nlink_t */
-/* Define to Haskell type for off_t */
-/* Define to Haskell type for pid_t */
-/* Define to Haskell type for ptrdiff_t */
-/* Define to Haskell type for rlim_t */
-/* Define to Haskell type for short */
-/* Define to Haskell type for signed char */
-/* Define to Haskell type for sig_atomic_t */
-/* Define to Haskell type for size_t */
-/* Define to Haskell type for speed_t */
-/* Define to Haskell type for ssize_t */
-/* Define to Haskell type for suseconds_t */
-/* Define to Haskell type for tcflag_t */
-/* Define to Haskell type for timer_t */
-/* Define to Haskell type for time_t */
-/* Define to Haskell type for uid_t */
-/* Define to Haskell type for uintmax_t */
-/* Define to Haskell type for uintptr_t */
-/* Define to Haskell type for unsigned char */
-/* Define to Haskell type for unsigned int */
-/* Define to Haskell type for unsigned long */
-/* Define to Haskell type for unsigned long long */
-/* Define to Haskell type for unsigned short */
-/* Define to Haskell type for useconds_t */
-/* Define to Haskell type for wchar_t */
-/* Define to the address where bug reports for this package should be sent. */
-/* Define to the full name of this package. */
-/* Define to the full name and version of this package. */
-/* Define to the one symbol short name of this package. */
-/* Define to the home page for this package. */
-/* Define to the version of this package. */
-/* The size of `kev.filter', as computed by sizeof. */
-/* The size of `kev.flags', as computed by sizeof. */
-/* The size of `struct MD5Context', as computed by sizeof. */
-/* Define to 1 if you have the ANSI C header files. */
-/* Define if stdlib.h declares unsetenv to return void. */
-/* #undef UNSETENV_RETURNS_VOID */
-/* Enable extensions on AIX 3, Interix.  */
-/* Enable GNU extensions on systems that have them.  */
-/* Enable threading extensions on Solaris.  */
-/* Enable extensions on HP NonStop.  */
-/* Enable general extensions on Solaris.  */
-/* Enable large inode numbers on Mac OS X 10.5.  */
-/* Number of bits in a file offset, on hosts where this is settable. */
-/* #undef _FILE_OFFSET_BITS */
-/* Define for large files, on AIX-style hosts. */
-/* #undef _LARGE_FILES */
-/* Define to 1 if on MINIX. */
-/* #undef _MINIX */
-/* Define to 2 if the system does not provide POSIX.1 features except with
-   this defined. */
-/* #undef _POSIX_1_SOURCE */
-/* Define to 1 if you need to in order for `stat' and other things to work. */
-/* #undef _POSIX_SOURCE */
 var h$errno = 0;
 function h$__hscore_get_errno() {
   ;
@@ -5990,7 +4706,7 @@ function h$setErrno(e) {
       if(es.indexOf('ENOTDIR') !== -1) return 20;
       if(es.indexOf('ENOENT') !== -1) return 2;
       if(es.indexOf('EEXIST') !== -1) return 17;
-      if(es.indexOf('ENETUNREACH') !== -1) return 22; // fixme
+      if(es.indexOf('ENETUNREACH') !== -1) return 22;
       if(es.indexOf('EPERM') !== -1) return 1;
       if(es.indexOf('EMFILE') !== -1) return 24;
       if(es.indexOf('EPIPE') !== -1) return 32;
@@ -5998,7 +4714,7 @@ function h$setErrno(e) {
       if(es.indexOf('EINVAL') !== -1) return 22;
       if(es.indexOf('ESPIPE') !== -1) return 29;
       if(es.indexOf('EBADF') !== -1) return 9;
-      if(es.indexOf('Bad argument') !== -1) return 2; // fixme?
+      if(es.indexOf('Bad argument') !== -1) return 2;
       throw ("setErrno not yet implemented: " + e);
   }
   h$errno = getErr();
@@ -6041,38 +4757,6 @@ function h$handleErrnoC(err, r_err, r_success, c) {
         c(r_success);
     }
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
 function h$MD5Init(ctx, ctx_off) {
   if(!ctx.arr) { ctx.arr = []; }
   ctx.arr[ctx_off] = new goog.crypt.Md5();
@@ -6090,64 +4774,6 @@ function h$MD5Final(dst, dst_off, ctx, ctx_off) {
   }
 }
 var h$__hsbase_MD5Final = h$MD5Final;
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// #define GHCJS_TRACE_ARITH 1
 function h$hs_eqWord64(a1,a2,b1,b2) {
   return (a1===b1 && a2===b2) ? 1 : 0;
 }
@@ -6231,14 +4857,9 @@ function h$hs_gtInt64(a1,a2,b1,b2) {
   }
 }
 function h$hs_quotWord64(a1,a2,b1,b2) {
-  // var a = h$ghcjsbn_mkBigNat_ww(a1,a2); // bigFromWord64(a1,a2);
-  // var b = h$ghcjsbn_mkBigNat_ww(b1,b2); // bigFromWord64(b1,b2);
   var q = h$ghcjsbn_quot_bb(h$ghcjsbn_mkBigNat_ww(a1,a2),
                             h$ghcjsbn_mkBigNat_ww(b1,b2));
-  return h$ghcjsbn_toWord64_b(q); // this should return the tuple
-  //RETURN_UBX_TUP2(h$ghcjsbn_toWord_b(h$ghcjsbn_shr_b(q, 32))
-  //  a.divide(b);
-  // RETURN_UBX_TUP2(c.shiftRight(32).intValue(), c.intValue());
+  return h$ghcjsbn_toWord64_b(q);
 }
 function h$hs_timesInt64(a1,a2,b1,b2) {
   var c = goog.math.Long.fromBits(a2,a1).multiply(goog.math.Long.fromBits(b2,b1));
@@ -6305,13 +4926,9 @@ function h$hs_gtWord64(a1,a2,b1,b2) {
   }
 }
 function h$hs_remWord64(a1,a2,b1,b2) {
-  /* var a = h$bigFromWord64(a1,a2);
-     var b = h$bigFromWord64(b1,b2);
-     var c = a.mod(b); */
   var r = h$ghcjsbn_rem_bb(h$ghcjsbn_mkBigNat_ww(a1,a2)
                            ,h$ghcjsbn_mkBigNat_ww(b1,b2));
   return h$ghcjsbn_toWord64_b(r);
-  // RETURN_UBX_TUP2(c.shiftRight(32).intValue(), c.intValue());
 }
 function h$hs_uncheckedIShiftL64(a1,a2,n) {
   ;
@@ -6324,7 +4941,6 @@ function h$hs_uncheckedIShiftRA64(a1,a2,n) {
   var num = new goog.math.Long(a2,a1).shiftRight(n);
   { h$ret1 = (num.getLowBits()); return (num.getHighBits()); };
 }
-// always nonnegative n?
 function h$hs_uncheckedShiftL64(a1,a2,n) {
   ;
   n &= 63;
@@ -6351,21 +4967,14 @@ function h$hs_uncheckedShiftRL64(a1,a2,n) {
     { h$ret1 = ((a1 >>> (n-32))|0); return (0); };
   }
 }
-// fixme this function appears to deoptimize a lot due to smallint overflows
 function h$imul_shim(a, b) {
     var ah = (a >>> 16) & 0xffff;
     var al = a & 0xffff;
     var bh = (b >>> 16) & 0xffff;
     var bl = b & 0xffff;
-    // the shift by 0 fixes the sign on the high part
-    // the final |0 converts the unsigned value into a signed value
     return (((al * bl)|0) + (((ah * bl + al * bh) << 16) >>> 0)|0);
 }
 var h$mulInt32 = Math.imul ? Math.imul : h$imul_shim;
-// function h$mulInt32(a,b) {
-//  return goog.math.Long.fromInt(a).multiply(goog.math.Long.fromInt(b)).getLowBits();
-// }
-// var hs_mulInt32 = h$mulInt32;
 function h$mulWord32(a,b) {
   return goog.math.Long.fromBits(a,0).multiply(goog.math.Long.fromBits(b,0)).getLowBits();
 }
@@ -6380,21 +4989,14 @@ function h$remWord32(a,b) {
   return goog.math.Long.fromBits(a,0).modulo(goog.math.Long.fromBits(b,0)).getLowBits();
 }
 function h$quotRem2Word32(a1,a2,b) {
-/*  var a = h$bigFromWord64(a1,a2);
-  var b = h$bigFromWord(b);
- var d = a.divide(b); */
-  /* var a = h$ghcjsbn_mkBigNat_ww(a1,a2);
-  var b = h$ghcjsbn_mkBigNat_w(b); */
   var q = [], r = [];
   h$ghcjsbn_quotRem_bb(q,r,h$ghcjsbn_mkBigNat_ww(a1,a2),h$ghcjsbn_mkBigNat_w(b));
   { h$ret1 = (h$ghcjsbn_toWord_b(r)); return (h$ghcjsbn_toWord_b(q)); };
-  // RETURN_UBX_TUP2(d.intValue(), a.subtract(b.multiply(d)).intValue());
 }
 function h$wordAdd2(a,b) {
   var c = goog.math.Long.fromBits(a,0).add(goog.math.Long.fromBits(b,0));
   { h$ret1 = (c.getLowBits()); return (c.getHighBits()); };
 }
-// this does an unsigned shift, is that ok?
 function h$uncheckedShiftRL64(a1,a2,n) {
   if(n < 0) throw "unexpected right shift";
   n &= 63;
@@ -6442,10 +5044,7 @@ var h$convertBuffer = new ArrayBuffer(8);
 var h$convertDouble = new Float64Array(h$convertBuffer);
 var h$convertFloat = new Float32Array(h$convertBuffer);
 var h$convertInt = new Int32Array(h$convertBuffer);
-// use direct inspection through typed array for decoding floating point numbers if this test gives
-// the expected answer. fixme: does this test catch all non-ieee or weird endianness situations?
 h$convertFloat[0] = 0.75;
-// h$convertFloat[0] = 1/0; // to force using fallbacks
 var h$decodeFloatInt = h$convertInt[0] === 1061158912 ? h$decodeFloatIntArray : h$decodeFloatIntFallback;
 var h$decodeDouble2Int = h$convertInt[0] === 1061158912 ? h$decodeDouble2IntArray : h$decodeDouble2IntFallback;
 function h$decodeFloatIntArray(d) {
@@ -6458,7 +5057,7 @@ function h$decodeFloatIntArray(d) {
     var exp = (i >> 23) & 0xff;
     var sgn = 2 * (i >> 31) + 1;
     var s = i&8388607;
-    if(exp === 0) { // zero or denormal
+    if(exp === 0) {
         if(s === 0) {
             ;
             { h$ret1 = (0); return (0); };
@@ -6502,7 +5101,7 @@ function h$decodeDouble2IntArray(d) {
     var i1 = h$convertInt[1];
     var ret1, ret2 = h$convertInt[0], ret3;
     var exp = (i1&2146435072)>>>20;
-  if(exp === 0) { // denormal or zero
+  if(exp === 0) {
     if((i1&2147483647) === 0 && ret2 === 0) {
       ret1 = 0;
       ret3 = 0;
@@ -6535,17 +5134,16 @@ function h$decodeDouble2IntFallback(d) {
     ;
     { h$ret1 = (ret1); h$ret2 = (ret2); h$ret3 = (ret3); return (sign); };
 }
-// round .5 to nearest even number
 function h$rintDouble(a) {
   var rounda = Math.round(a);
   if(a >= 0) {
-    if(a%1===0.5 && rounda%2===1) { // tie
+    if(a%1===0.5 && rounda%2===1) {
       return rounda-1;
     } else {
       return rounda;
     }
   } else {
-    if(a%1===-0.5 && rounda%2===-1) { // tie
+    if(a%1===-0.5 && rounda%2===-1) {
       return rounda-1;
     } else {
       return rounda;
@@ -6643,39 +5241,6 @@ if(typeof Math.fround === 'function') {
     return h$truncateFloat_buf[0];
   }
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// Unicode tables generated by ghcjs/utils/genUnicode.hs
 var h$printRanges = "f|!-f=|/q'/+1$J|(mo'1q&')| 63Y--EO'|$9| ('| ?'|!9?| ?-| %'AZ'| JI| +|#U2'''O0$)+'5'''+3*','O-).+''O0&&&'$-+''))0+$1C9)4(N0&,'7(('@+';A)2'''O0&,'5''')3'+','G7'.))*)'$&)')));+-))*'.>M-+2(PB)3(*1'&/+'733(2(P6,'5(*1'1$+'7&?)2(u'3(,32+'C)1''F)S4$'1)*/$2/7');| =+^n'$''$'.+0( #''<('-$.'7'+d| Yk+rk@<n|$G$-&|(E*'1$*'v*'f*'1$*'A| :*'| O'd)W/| t9|.r)|! 1=09Q5K;=(&;|!+'7/7/?'7/| z3z-| U7b:+;+(x'-9|  +W/9)| E'| K]'9/7/?'A| K| b+| #)|!W3| A)A)| /| I33r&/|%M/|&;'/'p'/'3 $a'| 3@>'/H')48-S1| +C''Y<)`GfA|#)/|-h-rU9M|H;'d'h);2| %| '| &|#<-| #$-&| 91'?S510000000|!4| CW| {;|$hW;+| I| u'|!=-v)|!+y-l;| '|$y} ^y7}%0j| /|9t)| 75|'fK|!+| {3|#3_''| S| 3+7/| 93| S5;/[+| r9`)| f8+f| 65?'7'|!=S[7/'/'/510| (+'|!#| %'7/}!e;;Q+| +}!'n|(/'|!Cp1;--W,$&&|!gE|(-C| I'| 5t?'W/?'jH*+-|#!+|$7)/'/'/'))10='';VH&@'?h|!f-)+| #)| v);+| &| %|!t^)| +A[+l;Y-z-`m+?x|#Q'7| vt3| 19|#4|&v5O73|#E/'$|  &)&Q| X35| j[)Y-| H| 9/'| I+&-3(X+)+5351| Idr+;5| 5)^'Y-W1+;1| j| [|+tb|(U| f+`A| E*?U17/| 3>;r5| [+&9/K9Gy|!S| ?-71)2'''O0&,'5''')5,1'1)-|%x| Y37|#b| 5'G| 5| S97p| 937|*K| p;|)y| ;|<Y|4M|!=|!M,|b`|7l}#8j|,^1b6+'|!/`'/7| U770L-I|3U| S9| 'CE}$&7'|e7|!E-=)517'+} 47|%M7r'| ^3|!5h| U|$/| x5G|#1| t| V&'&''+:$0| J*'30Z*,$)1|'T'|&O'| -}  %|$E'C|=C+X&$'$7* #/* $)&$' &'$'+0**$6D-),D| 1'|&#|  +|!7;A'A@m7=)b| @+z| `^=z-51'|#r| #)| f'| h-l3|%`| _-xu|#P'|#+C=)+;|!W;| tz;+| 937/t3`|I^}*Q/v} !59|$x}$#I|,'|G1|%A";
 var h$alnumRanges = "| +71W/W| '0'$)'(Pa|*2+;?-1$D|!Y&'+$/$)$J| o|#*|#oo'0r5| #$&&$3Y-)^9-| ^+|!;2'7H'B| ?'|!9?| 5+,| %G[| QI| +|!p'7H2'''O0$)+'5'''+3*',';'/1).+''O0&&&'$-+''))0+$1C9)4(N0&,'7(('@+'7E)2'''O0&,'5''')3'+','707'.))*)'$&)')));+-))*'.>==+2(PB)3(*1'&/+'731')2(P6,'5(*1'1$+'7&?)2(u'3(,32+'C+/''F)S4$'1)*/$2/7''=| =-A6r'$''$'.+0( #''<('-$.'7'+dP'/K $+7k+KFk5| :| ^/| f'p$-&z|'F*'1$*'v*'f*'1$*'A| :*'| O')5K)CC| t;|-j'EV-| `)91=09M9K;=(&;| r)*''7/7E)'7/| z3z-| U7b:+;7t'-9|  +W/9n[+| G]'9/7=2A| K| b+7E5;|!W;| 937)| +| n)i&/|%M/|&;'/'p'/'3 $a'| 30$))0)+'/+=-)0|!U''/-9/=| /fE*&7$)-/ $+8'+--+$| =|0/| A| fO|.#`|91| '| &|!y/55&p$-&| 91@S510000000c| '|*H)UA,'-+| v''')|!!*-v)|!+)+7Y| 3Cd7`3@d7rA|'-} X;| ^}%/C| /|9t| O| %'|& )[K| /6a| on5'|!='+_''| S| +3/7| 1;| S97/S)*| %'l;^)| K?9/b| 65?'7/Q)| [S)'C'-7/'/'/510y*+'|!#z&'7/}!e;;Q+| +}!'n|(/'|!Cp1;--;<,$&&|!Ff|()G| I'| 5t;+CC?| M-|#!I71W/W9|! )/'/'/')j;VH&@'?h|!f;| #;| ;E'|!Q|!s^)| +A[+l;Y-z-`'l+3,x|#Q'7| vt3| 1|#M|&v5O73|#E/'$|  &)&Q'b'p35| j[+W| U| 9/'| I+&-3(X+)+5Sbcd3_+-C| 57O'Y-WQ1| j| [|+tb|(U| W9`A| AMU17/| 36Cl'4| S99/K9Gm|!`| ?-71)2'''O0&,'5''')5,1'1)-|%x| U$37|#b| 5'5| G| K)87p| 937|*K| p;|)y| ;|<Y|4M|!=|!M|bl|7l}#8j|,^1b6|!;`'-9| 75+;70L-I|3U| S9| 'CE}$&7'|e7|!E-=)517)'} <3-)/33'1`+|#=)|&=G|#1| t| V&'&''+:$0| J*'30Z*,$)1|'T'UTaTaTaTaT2'| -}  %|$E'C|=C+X&$'$7* #/* $)&$' &'$'+0**$6D-),D|,t=|v'}*Q/v} !59|$x}$#I|,'|G1|%A";
 var h$lowerRanges = "|!3W| =uS2 <& (& 8' #)'$&('+&()'& #&$'$'($&'')/&& )' )&'$( >1'&'$+ %| SX|$=$(()GXj&)) ,,$'&'| /| ) 25 ;& '' Q| +r} KQ|  | G=g|!; l5 Q43/73333/73333?'333333-&/()&3+''337)&|&+(')X**&'3++| 2|]a| ''(' $+$'.- R'1$*:p$-}'Zi 7H .|#! ') @2 #' %*$&$) +| j|28z5'}%!p1;-|7`W|;?t} :;d}+l-WW1FWWW+$08WWWWWWWWWWWWWWWWW[[U.WU.WU.WU.WU.$";
@@ -6685,64 +5250,6 @@ var h$toLowerMapping = "| K Wb|!9 Qb!1bf  9#  !|$F  ## &'  (# &'  8#  !|!_# # #)
 var h$toUpperMapping = "|!1 Wa| = |A$x Qa!1a !|!`  9!  !|%.  #! $'  (! $'  7! $'  #!  !!|&]|(_'  !! $' $) $- $' |$>)  !!|#Y) |%i'  #! $' $+ $' $)  !! $' $)  !! |!N-  !!$ ! ! !$  !!$ ) ! !| e  )! $'  !!$ ! !)  4! $)  )! $3 $' '}!]? ! !+  %!  !!}![Y !}![S}![W !|$]|$T!'|$R ! |$L ! |$N}4qo)  !|$R}*H? ! |$V ! }*GS !}*H1  !|$Z|$_ ! }!Zd}4q6'  !|$_  !}!Zp|$c' |)N1 }%:g' |)_' |)_)  !}*GW|$m|#&'|$k|#.- |)c9 }4o.|#b |#ez  !! $) $) )|!r| % | _)k!Ea| B5a|!m'| D ! | B|!P)  !| $| 2 !0  ,!  !!| s !| g/ !|!T |$8' $' $| 1 daC| g 2 !5  ;! $'  '!  !!> Q !| + p| &} N7 }1H>) } pP|!v  l! $- |!X-  P! $313 /17 313 313 /19  $1 B3 313 '| [+| t'|!5'|!n'|!M'|!j' 313 313 313 '1 ! 37 }#R4+ F; '1? '1) >= F|'b | 6f C@+ $|2f WT|IE | '| &' $)  !}![q}![k $ !/ $' $7  R! $3  !! $+ $; p} hF ! } hF- }#Tm}'Zj  7! $I  .! $|##  '! $)  ?! $7  !! $'  %! $+ $+  !! $)  *! $}%P= Wa|;? tq} :; da}p>; ";
 var h$toTitleMapping = "|!1 Wa| = |A$x Qa!1a !|!`  9!  !|%.  #! $'  (! $'  7! $'  #!  !!|&]|(_'  !! $' $) $- $' |$>)  !!|#Y) |%i'  #! $' $+ $' $)  !! $' $)  !! |!N+  !#  !!# ! ! !#  )!  !!| e * ! ! # # !)  4! $)  )! $3 $' '}!]? ! !+  %!  !!}![Y !}![S}![W !|$]|$T!'|$R ! |$L ! |$N}4qo)  !|$R}*H? ! |$V ! }*GS !}*H1  !|$Z|$_ ! }!Zd}4q6'  !|$_  !}!Zp|$c' |)N1 }%:g' |)_' |)_)  !}*GW|$m|#&'|$k|#.- |)c9 }4o.|#b |#ez  !! $) $) )|!r| % | _)k!Ea| B5a|!m'| D ! | B|!P)  !| $| 2 !0  ,!  !!| s !| g/ !|!T |$8' $' $| 1 daC| g 2 !5  ;! $'  '!  !!> Q !| + p| &} N7 }1H>) } pP|!v  l! $- |!X-  P! $313 /17 313 313 /19  $1 B3 313 '| [+| t'|!5'|!n'|!M'|!j' 313 313 313 '1 ! 37 }#R4+ F; '1? '1) >= F|'b | 6f C@+ $|2f WT|IE | '| &' $)  !}![q}![k $ !/ $' $7  R! $3  !! $+ $; p} hF ! } hF- }#Tm}'Zj  7! $I  .! $|##  '! $)  ?! $7  !! $'  %! $+ $+  !! $)  *! $}%P= Wa|;? tq} :; da}p>; ";
 var h$catMapping = "d;P)3J)3 !/0 !34 !3.'37*'3)4'3W! !/3 !06 !-6W# !/4 !04f; !83+5 !73 !67 !&1 !4< !76 !74', !6#'3 !6, !&2),FQ!H1!S#H3# <!#$'# (!#$'# 8!#'! ##!)#'! !#!&'!&)!'#+!&'!&)!)#'!&'! ##!&'! !#!'# !!#'!&)! !#!&'!'# !&!)#+& !!$ !#! !$# !!$ )#!'# )!#$'# !!$ !#!&)! >#!1#'!&'!'# !!#+! %#!| S#,Y#G%+6;%?6-%16 !%6*E6|!O' #!# !%6 !!#' *)# !3!+ '6 !!3)! ! !!'!&E!!5!j#$'#)!)# ,!#$-# !!# !4!&'!'#| /!| )# 2!#N-'') <!#'! '#!'# Q!#!p!' */3!r# ! 3<' '7 !5 | #' !.'F''F'' !3'3 Y&- )&'39 /<)4'3J'3'79' !3<!'3d&*7&M'7*+3'&.|!5& !3&1' !<7/''%''N+''&7*)&'7,?3 ! < !&'`&Y'' |! &9',? 7*f&5''%N)3*- O&+'*5'*)'*-'' A3!U&)'' F| K I&| + b'0| 5& !'( !'&)(3'+(.'(,1'7&'''37* !3%A&.'(!3&' '&' O&!1& ! &) +&'  !'&)(+'' '(' '( !'&3 0+ '&!)&''' 7*'&'5/, !75- '' !( /&+ '&' O&!1&!'&!'&!'&'  !' )(''+ ''' )') .1 +& ! &1 7*'')&.9 '' !( 5&!)&!O&!1&!'&!-&'  !'&)(-'!'' !( '(.' ,A '&''' 7* !35A .'(!3&' '&' O&!1&!'&!-&'  !'& !('0+'' '(' '(.3  !'(+ '&!)&''' 7* !7&/,7  !'&!/&) )&!+&) '& ! &!'&) '&) )&) ;&+ '(.'() )(!)(.' ,/ 0? 7*),/7 !57- .)(!3&!)&!Q&!C&) ,)'+(!)'!+'1 ''!'&/ '&''' 7*3 1, !7 .'(!3&!)&!Q&!7&!-&'  !'& !('-( ! ''(!'(''1 '(1  !& '&''' 7*!'&? .'(!3&!)&!v&' ,)(+'!)(!)( !'&3 03 '&''' 7*/,) N/&' '(!G&) S&!5& ! &' 1&) .+ )()' ! '!3(/ 7*' '(F; | )&.'&1'+ J/&*3'F7*'3n '& ! &' '& ! &' ,/ +&!1&!)& # &' '&!+&.'&/'!'',' -& ! %!/'' 7*' +&d ,)7A3 !73)7''/77*7, $7' #/0'(3&!l&+ ?'0-'F''-&9'!l'!37./7!'7-3+7'3n z&'(+'0/'0'''('',7*/3/&'(''+&)',)('&1()&+'=&.'(''/( !'&07*)(.'7p! ! !- $' z& !3%|'E&!+&' 1& ! &!+&' v&!+&' f&!+&' 1& ! &!+&' A&!| ;&!+&' | O&' )'53K,) C&77/ | t&9 <|-j&'3E&PW& !/0) | `&)3)+3&1 =&!+&)'9 G&)''35 G&''; =&!)&!''; | 1&''01'3(.'(9')3*)3 !5&.' 7*/ 7,/ /3<+3)' !< 7*/ j&*| 1&3 v& !'&- | U&7 b&!)'+('')(+ '(./()'+ N) '37*`&' -&9 |  &+ E(1&'(/ 7*8) h7Q&'''(.' '3| 3& !('01' ! ' !(''(3'/(7'' .7*/ 7*/ 13*/3' ?'2| K +'0| '& !'(-' !('-(.'(1&+ 7*13775'57) ''0`&0+''(''0)''&7*|  & !'('')( !'()''(3 +3l&3(3''('') -37*) )&7*`&/%'3| I 333 )'F='01'+&.+&'(.'&!''/ |  #| G%=#*h#n%| 5'/ +' l!#$5# Q!#$5#3!/#' /!' 3#3!3#3!/#' /!' 3# % !3#3!?#' 3#3$3#3$3#3$-#!'#+! !$6&)6)#!'#+!()6+#' '#+!!)63#-!)6' )#!'#+!('6!98-</.'3 !12>'1 !2/B33 !9:-<P53 !12+3'-)3 !4/@93 !43:73P-<!7< !,%' /,)4 !/0*7,)4 !/0!=%) `5G ='+).));'A '7$+7$'7&)!'#)! !#7$'7H-!/7 $!7+! !7#+!&+&&'7'#'!-4$+# !74'7 !#7C,j+ !!#++8/ -4-7'4+7H'7H'7H17Hb7'4'7 !47Hb7|%z437 #/0K7'417 !/0| l7H`7U4t7/4U7- r7U 97M | A,| f7O,|$)7H57H| 5734|!M7H|%Q7 (/0`,|  7-4 !/0b4 &/0C4|%b7|!v4 ,/0| G4 #/0d4 !/0|%f4| )7M4'7/4r7' d7' h7) ;7!37| % | '!!| '# ! !&)!'# $!#+! !#!'#$/#'%)! R#!'#/7 #!#)' !!#- +38'3p# ! #- &' | 9&1  !%3? .Q&5 1&!1&!1&!1&!1&!1&!1&!1&!d''3 #12)3 !12 !31D53<'3 !.3 !12'3 !12 %/0-3*73'.+3 !.3>| C W7!|! 7; |$h7W ;7+ P)3 !7% !&+ &/0'7 %/0 !./'0N5++''(<-%'7)+ !%&F'7!| v&' '''6'% !&.|!#&F)%,- v&) |!+&!'7+,77Y&- l7; C&b7!7,`73,NA,d77,r7A,| G7!|%b7} X;&7 | I7}%/C&| / M&*|9G&) | 775 t&/%'3|%z&*)3C&7*'&K  8!# !&'))F7' !3% /!#'% ! '| U&7+''/33 Q65%'6 '!#$)# @!#*3# #!#'! %#! !#%'6 #!# ! ! !#!)# +!#+!' '!| S ,'%&1&.)&.+&.Q&'(''0+7+ /,'7 !57/ | 1&+33 '(| -&C(.5 '37*/ G'/&)3,+ 7*[&3''3Q&9''(9 F^&) )'0| '&.'(+''(.+(=3 ! %7*+ '3-& !'%5&7*-&!v&/''('''(''5 )&.3& !'(' 7*' +3C&*/&)7 !&( !'(| -& !'&)''&''-&'' !&',S '&*'39&0'''('3,'% !('7 /&' /&' /&5 1&!1&!z#L+%+ '#|!# j&'(.'(.'( !3(.' 7*/ }!e;&; Q&+ | +&+ |MQ=} T7 |(/&' |!C&p 1#; -#-  !&'7&H=&!-& ! &!'&!'&!|!G&C6E |()& !0/C | I&' | 5&t ;& !57' C'13 !/0F/ ?'' F'.'- )/0'3 !/0+3)-)3!+3 !./ #0/@)3 !4.)4 ! 3J'3+ -&!|##&'  !< )3J)3 !/0 !34 !3.'37*'3)4'3W! !/3 !06 !-6W# !/4 !04 !/0 !3/@'37&*| #&'%b&) /&' /&' /&' )&) '5 !46N'5 ! 7+4'77 )<'7' ;&!W&!I&!'&!A&' ?&h |!f&- )3+ | #,) 57| 3++,E7',N) ;7+ N| ' | #7.|!t ^&) | +&A .Y,+ d&+,; E&63&6- p&-'- `& ! 3l&+ 3&F-+x t!t#| f&' 7*| v t&3 | 1&9 F|#5 |&v&5 O&7 3&|#E /&'  !& |  &!'&) ,' Q& ! 33,Q&'71,b&3 5,| j O&/,) FW&- F| I | 9&/ '&| I ,)'!''- +'+&!)&!Y&+ )'+ .3,3 531 ^&',F^&),d 3&N[&''+ -,135 | 5&) 13O&' 3,I&- 3,G&1 +3; 1,| j | [&|+t b,|(U  !('0| 3&A'13+ K,7*A )'0| #&)(+''('''3X+3? U&1 7*/ )'l&-'03'!7*+3; j&.'3,5 ''0| )&)(5''(+&+3+ F' 7*,/ K,9 G&!U&)()''( !'(''/3|!S | '&.)(3'- 7*1 .'(!3&' '&' O&!1&!'&!-&'  !'&'(.+(' '(' )(5 0- -&'(' 1') -'|%x | )&)(/' !('+(''0'''& !3&3 7*|#b | '&)(+'' +(''0''53| 5 | )&)(3''( !'('')3,9 7*p z& !'(.'(/' !('3 7*|*K d!d#7*5,; ,|)z | ;&|<Y |4M&|!= |!M+!-3|b` |7l&}#8j |,^&1 b&!7*+ '3|!/ `&' -'F7 | )&1'-3+7+% !377 7*!1,!M&- I&|3U | S&9 ,| %(C +'=%}$&7 '&|e7 |!E&- =&) 5&1 7&' N''F+<} 4/ |%M77 r7' | A7'()')7/(3<3''71'`7+'| )7h | M7)'N|$/ | x75 G,|#1 W!W#W!1#!G#W!W# !! '!' $' '!' +!!3!+# ! #!1#!9#W!W#'!!+!' 3!!1!!W#'!!+!!-! ! !) 1!!W#W!W#W!W#W!W#W!W#W!W#W![#' U!HU#H/#U!HU#H/#U!HU#H/#U!HU#H/#U!HU#H/# !!#' | -*}  % |$E&' 5,1'|=C +&!Y&!'& ! &'  !& 7&!+& # &/ ,+  $& )&!'& ! &'  && '& ! &' +&!1&!+&!+& ! &!7&!E&- )&!-&!E&| 1 '4|&# |  7+ |!77; A7' A7!A7!n77 =,) b7!| A7+ z7| ` ^7= z7- 571 '7|#r | #7) | f7' | h7- l73 |%`7!| `7- x7!v7!|#Q7' |#+7C =7) +7; |!W7; | t7z ;7+ | 973 77/ t73 `7|I^ }*Q/&v } !5&9 |$x&}$#I |,'&|AO X` |!/<|!p |%A'}PF' ";
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// encode a string constant
 function h$str(s) {
   var enc = null;
   return function() {
@@ -6752,22 +5259,6 @@ function h$str(s) {
     return enc;
   }
 }
-// encode a packed string
-// since \0 is used to separate strings (and a common occurrence)
-// we add the following mapping:
-//   - \0  -> \cz\0
-//   - \cz -> \cz\cz
-//
-// decoding to bytes, the following is produced:
-//   - \cz\0  -> C0 80
-//   - \cz\cz -> 1A
-//
-// additionally, for dealing with raw binary data we have an escape sequence
-// to pack base64 encoded runs:
-//
-//   - \cz\xNN -> followed by NN-0x1f (31 decimal) bytes of base64 encoded
-//                data. supported range: 0x20 .. 0x9f (1-128 bytes data)
-//
 function h$pstr(s) {
   var enc = null;
   return function() {
@@ -6777,7 +5268,6 @@ function h$pstr(s) {
     return enc;
   }
 }
-// encode a raw string from bytes
 function h$rstr(d) {
   var enc = null;
   return function() {
@@ -6787,11 +5277,9 @@ function h$rstr(d) {
     return enc;
   }
 }
-// these aren't added to the CAFs, so the list stays in mem indefinitely, is that a problem?
 function h$strt(str) { return (h$c1(h$lazy_e, (function() { return h$toHsString(str); }))); }
 function h$strta(str) { return (h$c1(h$lazy_e, (function() { return h$toHsStringA(str); }))); }
 function h$strtb(arr) { return (h$c1(h$lazy_e, (function() { return h$toHsStringMU8(arr); }))); }
-// unpack strings without thunks
 function h$ustra(str) { return h$toHsStringA(str); }
 function h$ustr(str) { return h$toHsString(str); }
 function h$urstra(arr) { return h$toHsList(arr); }
@@ -6824,7 +5312,6 @@ function h$u_iswalnum(a) {
   if(h$alnum == null) { h$alnum = h$decodeRLE(h$alnumRanges); }
   return h$alnum[a] == 1 ? 1 : 0;
 }
-// var h$spaceChars = [9,10,11,12,13,32,160,5760,8192,8193,8194,8195,8196,8197,8198,8199,8200,8201,8202,8239,8287,12288];
 function h$isSpace(a) {
     if(a<5760) return a===32||(a>=9&&a<=13)||a===160;
     return (a>=8192&&a<=8202)||a===5760||a===8239||a===8287||a===12288;
@@ -6862,7 +5349,6 @@ function h$u_iswprint(a) {
     if(a < 0xE0000) return 0;
     return h$print[a-0xB0000]|0;
 }
-// decode a packed string (Compactor encoding method) to an array of numbers
 function h$decodePacked(s) {
     function f(o) {
         var c = s.charCodeAt(o);
@@ -6881,12 +5367,11 @@ function h$decodePacked(s) {
     }
     return r;
 }
-// decode string with encoded character ranges
 function h$decodeRLE(str) {
     var r = [], x = 0, i = 0, j = 0, v, k, a = h$decodePacked(str);
     while(i < a.length) {
         v = a[i++];
-        if(v === 0) { // alternating
+        if(v === 0) {
             k = a[i++];
             while(k--) {
                 r[j++] = x;
@@ -6912,7 +5397,7 @@ function h$decodeMapping(str, f) {
     var r = [], i = 0, j = 0, k, v, v2, a = h$decodePacked(str);
     while(i < a.length) {
         v = a[i++];
-        if(v === 0) { // alternating
+        if(v === 0) {
             k = a[i];
             v = f(a[i+1]);
             v2 = f(a[i+2]);
@@ -6942,18 +5427,16 @@ function h$decodeMapping(str, f) {
 var h$unicodeCat = null;
 function h$u_gencat(a) {
     if(h$unicodeCat == null) h$unicodeCat = h$decodeMapping(h$catMapping, function(x) { return x; });
-    // private use
     if(a >= 0xE000 && a <= 0xF8FF || a >= 0xF0000 & a <= 0xFFFFD || a >= 0x100000 && a <= 0x10FFFD) return 28;
     var c = a < 0x30000 ? (h$unicodeCat[a]|0) :
         (a < 0xE0000 ? 0 : (h$unicodeCat[a-0xB0000]|0));
     return c?c-1:29;
 }
 function h$localeEncoding() {
-   // h$log("### localeEncoding");
-   { h$ret1 = (0); return (h$encodeUtf8("UTF-8")); }; // offset 0
+   { h$ret1 = (0); return (h$encodeUtf8("UTF-8")); };
 }
 function h$wcwidth(wch) {
-  return 1; // XXX: add real implementation
+  return 1;
 }
 function h$rawStringData(str) {
     var v = h$newByteArray(str.length+1);
@@ -6964,7 +5447,6 @@ function h$rawStringData(str) {
     u8[str.length] = 0;
     return v;
 }
-// encode a javascript string to a zero terminated utf8 byte array
 function h$encodeUtf8(str) {
   return h$encodeUtf8Internal(str, false, false);
 }
@@ -6974,24 +5456,20 @@ function h$encodeModifiedUtf8(str) {
 function h$encodePackedUtf8(str) {
   return h$encodeUtf8Internal(str, false, true);
 }
-// modified: encode \0     -> 192 128
-// packed:   encode \cz\cz -> 26
-//                  \cz\0  -> 192 128
 function h$encodeUtf8Internal(str, modified, packed) {
   var i, j, c, low, b64bytes, b64chars;
   function base64val(cc) {
-    if(cc >= 65 && cc <= 90) return cc - 65; // A-Z
-    if(cc >= 97 && cc <= 122) return cc - 71; // a-z
-    if(cc >= 48 && cc <= 57) return cc + 4; // 0-9
-    if(cc === 43) return 62; // +
-    if(cc === 47) return 63; // /
-    if(cc === 61) return 0; // = (treat padding as zero)
+    if(cc >= 65 && cc <= 90) return cc - 65;
+    if(cc >= 97 && cc <= 122) return cc - 71;
+    if(cc >= 48 && cc <= 57) return cc + 4;
+    if(cc === 43) return 62;
+    if(cc === 47) return 63;
+    if(cc === 61) return 0;
     throw new Error("invalid base64 value: " + cc);
   }
   var n = 0;
   var czescape = false;
   for(i=0;i<str.length;i++) {
-    // non-BMP encoded as surrogate pair in JavaScript string, get actual codepoint
     var c = str.charCodeAt(i);
     if (0xD800 <= c && c <= 0xDBFF) {
       low = str.charCodeAt(i+1);
@@ -6999,12 +5477,12 @@ function h$encodeUtf8Internal(str, modified, packed) {
       i++;
     }
     if(czescape) {
-      if(c === 26) { // \cz\cz -> 26
+      if(c === 26) {
         n+=1;
-      } else if(c === 0) { // \cz\0 -> 192 128
+      } else if(c === 0) {
         n+=2
       } else if(c >= 0x20 && c <= 0x9f) {
-        b64bytes = c - 0x1f; // number of bytes in base64 encoded run
+        b64bytes = c - 0x1f;
         b64chars = ((b64bytes + 2) / 3) << 2;
         n += b64bytes;
         i += b64chars;
@@ -7037,13 +5515,11 @@ function h$encodeUtf8Internal(str, modified, packed) {
   n = 0;
   for(i=0;i<str.length;i++) {
     c = str.charCodeAt(i);
-    // non-BMP encoded as surrogate pair in JavaScript string, get actual codepoint
     if (0xD800 <= c && c <= 0xDBFF) {
       low = str.charCodeAt(i+1);
       c = ((c - 0xD800) * 0x400) + (low - 0xDC00) + 0x10000;
       i++;
     }
-//    h$log("### encoding char " + c + " to UTF-8: " + String.fromCodePoint(c));
     if(packed && !czescape && c === 26) {
       czescape = true;
     } else if(c === 0 && (modified || czescape)) {
@@ -7112,12 +5588,9 @@ function h$encodeUtf8Internal(str, modified, packed) {
       n+=6;
     }
   }
-  u8[v.len-1] = 0; // terminator
-//  h$log("### encodeUtf8: " + str);
-//  h$log(v);
+  u8[v.len-1] = 0;
   return v;
 }
-// encode a javascript string to a zero terminated utf16 byte array
 function h$encodeUtf16(str) {
   var n = 0;
   var i;
@@ -7144,37 +5617,10 @@ function h$encodeUtf16(str) {
       n+=4;
     }
   }
-  dv.setUint8(v.len-1,0); // terminator
+  dv.setUint8(v.len-1,0);
   return v;
 }
-/*
-function h$encodeUtf16(str) {
-  var b = new DataView(new ArrayBuffer(str.length * 2));
-  for(var i=str.length-1;i>=0;i--) {
-    b.setUint16(i<<1, str.charCodeAt(i));
-  }
-  h$ret1 = 0;
-  return b;
-}
-var h$eU16 = h$encodeUtf16;
-
-function h$decodeUtf16(v,start) {
-  return h$decodeUtf16(v, v.byteLength - start, start);
-}
-
-function h$decodeUtf16z(v,start) {
-  var len = v.byteLength - start;
-  for(var i=start;i<l;i+=2) {
-    if(v.getUint16(i) === 0) {
-      len = i;
-      break;
-    }
-  }
-  return h$decodeUtf16l(v,l,start)
-}
-*/
 function h$decodeUtf16l(v, byteLen, start) {
-  // perhaps we can apply it with an Uint16Array view, but that might give us endianness problems
   var a = [];
   for(var i=0;i<byteLen;i+=2) {
     a[i>>1] = v.dv.getUint16(i+start,true);
@@ -7182,36 +5628,26 @@ function h$decodeUtf16l(v, byteLen, start) {
   return h$charCodeArrayToString(arr);
 }
 var h$dU16 = h$decodeUtf16;
-// decode a buffer with UTF-8 chars to a JS string
-// stop at the first zero
 function h$decodeUtf8z(v,start) {
-//  h$log("h$decodeUtf8z");
   var n = start;
   var max = v.len;
   while(n < max) {
-//    h$log("### " + n + " got char: " + v.u8[n]);
     if(v.u8[n] === 0) { break; }
     n++;
   }
   return h$decodeUtf8(v,n,start);
 }
-// decode a buffer with Utf8 chars to a JS string
-// invalid characters are ignored
 function h$decodeUtf8(v,n0,start) {
-//  h$log("### decodeUtf8");
-//  h$log(v);
   var n = n0 || v.len;
   var arr = [];
   var i = start || 0;
   var code;
   var u8 = v.u8;
-//  h$log("### decoding, starting at:  " + i);
   while(i < n) {
     var c = u8[i];
     while((c & 0xC0) === 0x80) {
       c = u8[++i];
     }
-//    h$log("### lead char: " + c);
     if((c & 0x80) === 0) {
       code = (c & 0x7F);
       i++;
@@ -7251,8 +5687,6 @@ function h$decodeUtf8(v,n0,start) {
              );
       i+=6;
     }
-    // h$log("### decoded codePoint: " + code + " - " + String.fromCharCode(code)); // String.fromCodePoint(code));
-    // need to deal with surrogate pairs
     if(code > 0xFFFF) {
       var offset = code - 0x10000;
       arr.push(0xD800 + (offset >> 10), 0xDC00 + (offset & 0x3FF));
@@ -7262,7 +5696,6 @@ function h$decodeUtf8(v,n0,start) {
   }
   return h$charCodeArrayToString(arr);
 }
-// fixme what if terminator, then we read past end
 function h$decodeUtf16(v) {
   var n = v.len;
   var arr = [];
@@ -7283,53 +5716,42 @@ function h$charCodeArrayToString(arr) {
     return r;
 }
 function h$hs_iconv_open(to,to_off,from,from_off) {
-  h$errno = h$EINVAL; // no encodings supported
+  h$errno = h$EINVAL;
   return -1;
-//  var fromStr = decodeUtf8(from, from_off);
-//  var toStr = decodeUtf8(to, to_off);
-//  h$log("#### hs_iconv_open: " + fromStr + " -> " + toStr);
-//  return 1; // fixme?
 }
 function h$hs_iconv_close(iconv) {
   return 0;
 }
-// ptr* -> ptr (array)
 function h$derefPtrA(ptr, ptr_off) {
   return ptr.arr[ptr_off][0];
 }
-// ptr* -> ptr (offset)
 function h$derefPtrO(ptr, ptr_off) {
   return ptr.arr[ptr_off][1];
 }
-// word** -> word    ptr[x][y]
 function h$readPtrPtrU32(ptr, ptr_off, x, y) {
   x = x || 0;
   y = y || 0;
   var arr = ptr.arr[ptr_off + 4 * x];
   return arr[0].dv.getInt32(arr[1] + 4 * y, true);
 }
-// char** -> char   ptr[x][y]
 function h$readPtrPtrU8(ptr, ptr_off, x, y) {
   x = x || 0;
   y = y || 0;
   var arr = ptr.arr[ptr_off + 4 * x];
   return arr[0].dv.getUint8(arr[1] + y);
 }
-// word**   ptr[x][y] = v
 function h$writePtrPtrU32(ptr, ptr_off, v, x, y) {
   x = x || 0;
   y = y || 0;
   var arr = ptr.arr[ptr_off + 4 * x];
   arr[0].dv.putInt32(arr[1] + y, v);
 }
-// unsigned char** ptr[x][y] = v
 function h$writePtrPtrU8(ptr, ptr_off, v, x, y) {
   x = x || 0;
   y = y || 0;
   var arr = ptr.arr[ptr_off+ 4 * x];
   arr[0].dv.putUint8(arr[1] + y, v);
 }
-// convert JavaScript String to a Haskell String
 function h$toHsString(str) {
   if(typeof str !== 'string') return h$ghczmprimZCGHCziTypesziZMZN;
   var i = str.length - 1;
@@ -7345,7 +5767,6 @@ function h$toHsString(str) {
   }
   return r;
 }
-// string must have been completely forced first
 function h$fromHsString(str) {
     var xs = '';
     while(((str).f === h$ghczmprimZCGHCziTypesziZC_con_e)) {
@@ -7355,7 +5776,6 @@ function h$fromHsString(str) {
     }
     return xs;
 }
-// list of JSVal to array, list must have been completely forced first
 function h$fromHsListJSVal(xs) {
     var arr = [];
     while(((xs).f === h$ghczmprimZCGHCziTypesziZC_con_e)) {
@@ -7364,7 +5784,6 @@ function h$fromHsListJSVal(xs) {
     }
     return arr;
 }
-// ascii only version of the above
 function h$toHsStringA(str) {
     if(typeof str !== 'string') return h$ghczmprimZCGHCziTypesziZMZN;
     var i = str.length - 1;
@@ -7375,7 +5794,6 @@ function h$toHsStringA(str) {
     }
     return r;
 }
-// convert array with modified UTF-8 encoded text
 function h$toHsStringMU8(arr) {
     var i = arr.length - 1, accept = false, b, n = 0, cp = 0, r = h$ghczmprimZCGHCziTypesziZMZN;
     while(i >= 0) {
@@ -7408,7 +5826,6 @@ function h$toHsList(arr) {
   }
   return r;
 }
-// array of JS values to Haskell list of JSVal
 function h$toHsListJSVal(arr) {
     var r = h$ghczmprimZCGHCziTypesziZMZN;
     for(var i=arr.length-1;i>=0;i--) {
@@ -7416,7 +5833,6 @@ function h$toHsListJSVal(arr) {
     }
     return r;
 }
-// unpack ascii string, append to existing Haskell string
 function h$appendToHsStringA(str, appendTo) {
   var i = str.length - 1;
   var r = appendTo;
@@ -7426,74 +5842,18 @@ function h$appendToHsStringA(str, appendTo) {
   }
   return r;
 }
-// throw e wrapped in a GHCJS.Prim.JSException  in the current thread
 function h$throwJSException(e) {
-  // create a JSException object and  wrap it in a SomeException
-  // adding the Exception dictionary
-  var strVal = e.toString() + '\n' + Array.prototype.join.call(e.stack, '\n');
-  var someE = (h$c2(h$baseZCGHCziExceptionziSomeException_con_e,(h$ghcjszmprimZCGHCJSziPrimzizdfExceptionJSException),((h$c2(h$ghcjszmprimZCGHCJSziPrimziJSException_con_e,((h$c1(h$ghcjszmprimZCGHCJSziPrimziJSVal_con_e, (e)))),(h$toHsString(strVal)))))));
+  var strVal;
+  if(typeof e === 'string') {
+    strVal = e;
+  } else if(e instanceof Error) {
+    strVal = e.toString() + '\n' + Array.prototype.join.call(e.stack, '\n');
+  } else {
+    strVal = "" + e;
+  }
+  var someE = (h$c2(h$baseZCGHCziExceptionziTypeziSomeException_con_e,(h$ghcjszmprimZCGHCJSziPrimzizdfExceptionJSException),((h$c2(h$ghcjszmprimZCGHCJSziPrimziJSException_con_e,((h$c1(h$ghcjszmprimZCGHCJSziPrimziJSVal_con_e, (e)))),(h$toHsString(strVal)))))));
   return h$throw(someE, true);
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// set up debug logging for the current JS environment/engine
-// browser also logs to <div id="output"> if jquery is detected
-// the various debug tracing options use h$log
 var h$glbl;
 function h$getGlbl() { h$glbl = this; }
 h$getGlbl();
@@ -7513,7 +5873,6 @@ function h$log() {
       }
     }
   } catch(ex) {
-    // ignore console.log exceptions (for example for IE9 when console is closed)
   }
 }
 function h$collectProps(o) {
@@ -7521,8 +5880,6 @@ function h$collectProps(o) {
   for(var p in o) { props.push(p); }
   return("{"+props.join(",")+"}");
 }
-// load the command line arguments in h$programArgs
-// the first element is the program name
 var h$programArgs;
 if(h$isNode) {
     h$programArgs = process.argv.slice(1);
@@ -7578,8 +5935,6 @@ if(h$isNode) {
   ;
   return cput;
 }
-  // XXX this allows more testsuites to run
-  //     but I don't really like returning a fake value here
   ;
   return ++h$fakeCpuTime;
   return -1;
@@ -7640,22 +5995,14 @@ function h$unsetenv(name, name_off) {
   if(h$isNode) delete process.env[n];
   return 0;
 }
-/*
-  Note:
-   SUSv2 specifies that the argument passed to putenv is made part
-   of the environment. Later changes to the value will be reflected
-   in the environment.
-
-   this implementation makes a copy instead.
- */
 function h$putenv(str, str_off) {
   var x = h$decodeUtf8z(str, str_off);
   var i = x.indexOf('=');
   ;
-  if(i === -1) { // remove the value
+  if(i === -1) {
     ;
     if(h$isNode) delete process.env[x];
-  } else { // set the value
+  } else {
     var name = x.substring(0, i)
     var val = x.substring(i+1);
     ;
@@ -7667,7 +6014,6 @@ function h$errorBelch() {
   h$log("### errorBelch: do we need to handle a vararg function here?");
 }
 function h$errorBelch2(buf1, buf_offset1, buf2, buf_offset2) {
-//  log("### errorBelch2");
   h$errorMsg(h$decodeUtf8z(buf1, buf_offset1), h$decodeUtf8z(buf2, buf_offset2));
 }
 function h$debugBelch2(buf1, buf_offset1, buf2, buf_offset2) {
@@ -7677,13 +6023,11 @@ function h$errorMsg(pat) {
   function stripTrailingNewline(xs) {
     return xs.replace(/\r?\n$/, "");
   }
-  // poor man's vprintf
   var str = pat;
   for(var i=1;i<arguments.length;i++) {
     str = str.replace(/%s/, arguments[i]);
   }
   if(h$isGHCJSi) {
-    // ignore message
   } else if(h$isNode) {
     process.stderr.write(str);
   } else if (h$isJsShell && typeof printErr !== 'undefined') {
@@ -7705,9 +6049,7 @@ function h$errorMsg(pat) {
     }
   }
 }
-// this needs to be imported with foreign import ccall safe/interruptible
 function h$performMajorGC() {
-    // save current thread state so we can enter the GC
     var t = h$currentThread, err = null;
     t.sp = h$sp;
     h$currentThread = null;
@@ -7716,7 +6058,6 @@ function h$performMajorGC() {
     } catch(e) {
         err = e;
     }
-    // restore thread state
     h$currentThread = t;
     h$sp = t.sp;
     h$stack = t.stack;
@@ -7728,7 +6069,6 @@ function h$baseZCSystemziCPUTimeZCgetrusage() {
 function h$getrusage() {
   return 0;
 }
-// fixme need to fix these struct locations
 function h$gettimeofday(tv_v,tv_o,tz_v,tz_o) {
   var now = Date.now();
   tv_v.dv.setInt32(tv_o, (now / 1000)|0, true);
@@ -7756,9 +6096,9 @@ function h$localtime_r(timep_v, timep_o, result_v, result_o) {
   result_v.dv.setInt32(result_o + 16, d.getMonth(), true);
   result_v.dv.setInt32(result_o + 20, d.getFullYear()-1900, true);
   result_v.dv.setInt32(result_o + 24, d.getDay(), true);
-  result_v.dv.setInt32(result_o + 28, 0, true); // fixme yday 1-365 (366?)
-  result_v.dv.setInt32(result_o + 32, -1, true); // dst information unknown
-  result_v.dv.setInt32(result_o + 40, 0, true); // gmtoff?
+  result_v.dv.setInt32(result_o + 28, 0, true);
+  result_v.dv.setInt32(result_o + 32, -1, true);
+  result_v.dv.setInt32(result_o + 40, 0, true);
   if(!result_v.arr) result_v.arr = [];
   result_v.arr[result_o + 40] = [h$myTimeZone, 0];
   result_v.arr[result_o + 48] = [h$myTimeZone, 0];
@@ -7812,7 +6152,6 @@ function h$checkForeignRefs(refs) {
         console.warn("number of arguments matches old ByteArray calling convention: " + callStr(r));
       }
     }
-    // todo: check other calling conventions
   }
   for(var i=0;i<refs.length;i++) {
     checkRef(refs[i]);
@@ -7827,40 +6166,6 @@ function h$getOrSetGHCConcSignalSignalHandlerStore(d,o) {
   }
   { h$ret1 = (h$GHCConcSignalSignalHandlerStore_o); return (h$GHCConcSignalSignalHandlerStore_d); };
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// some Enum conversion things
-// an array of generic enums
 var h$enums = [];
 function h$initEnums() {
   for(var i=0;i<256;i++) {
@@ -7875,7 +6180,6 @@ function h$makeEnum(tag) {
   h$setObjInfo(f, 2, "Enum", [], tag+1, 0, [1], null);
   return h$c0(f);
 }
-// used for all non-Bool enums
 function h$tagToEnum(tag) {
   if(tag >= h$enums.length) {
     return h$makeEnum(tag);
@@ -7886,78 +6190,18 @@ function h$tagToEnum(tag) {
 function h$dataTag(e) {
   return (e===true)?1:((typeof e !== 'object')?0:(e.f.a-1));
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// weak reference support
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
 var h$weakPointerList = [];
-// called by the GC after marking the heap
 function h$finalizeWeaks(toFinalize) {
     var mark = h$gcMark;
     var i, w;
     ;
-    // start a finalizer thread if any finalizers need to be run
     if(toFinalize.length > 0) {
         var t = new h$Thread();
         for(i=0;i<toFinalize.length;i++) {
             w = toFinalize[i];
             t.sp += 6;
-            t.stack[t.sp-5] = 0; // mask
-            t.stack[t.sp-4] = h$noop; // handler, dummy
+            t.stack[t.sp-5] = 0;
+            t.stack[t.sp-4] = h$noop;
             t.stack[t.sp-3] = h$catch_e;
             t.stack[t.sp-2] = h$ap_1_0;
             t.stack[t.sp-1] = w.finalizer;
@@ -7968,15 +6212,17 @@ function h$finalizeWeaks(toFinalize) {
     }
 }
 var h$weakN = 0;
-/** @constructor */
 function h$Weak(key, val, finalizer) {
     if(typeof key !== 'object') {
-        // can't attach a StableName to objects with unboxed storage
-        // our weak ref will be finalized soon.
         ;
         this.keym = new h$StableName(0);
     } else {
-        if(typeof key.m !== 'object') key.m = new h$StableName(key.m);
+        if(typeof key.m !== 'object') {
+          if(typeof key.m !== 'number') {
+            h$log("attaching weak to unsupported object");
+          }
+          key.m = new h$StableName(key.m);
+        }
         this.keym = key.m;
     }
     ;
@@ -8009,93 +6255,28 @@ function h$finalizeWeak(w) {
         { h$ret1 = (1); return (r); };
     }
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// preemptive threading support
-// run gc when this much time has passed (ms)
-// preempt threads after the scheduling quantum (ms)
-// check sched quantum after 10*GHCJS_SCHED_CHECK calls
-// yield to js after running haskell for GHCJS_BUSY_YIELD ms
 var h$threadIdN = 0;
-// all threads except h$currentThread
-// that are not finished/died can be found here
 var h$threads = new h$Queue();
 var h$blocked = new h$Set();
-/** @constructor */
 function h$Thread() {
     this.tid = ++h$threadIdN;
     this.status = (0);
     this.stack = [h$done, 0, h$baseZCGHCziConcziSynczireportError, h$catch_e];
     this.sp = 3;
-    this.mask = 0; // async exceptions masked (0 unmasked, 1: uninterruptible, 2: interruptible)
-    this.interruptible = false; // currently in an interruptible operation
-    this.excep = []; // async exceptions waiting for unmask of this thread
-    this.delayed = false; // waiting for threadDelay
-    this.blockedOn = null; // object on which thread is blocked
-    this.retryInterrupted = null; // how to retry blocking operation when interrupted
-    this.transaction = null; // for STM
+    this.mask = 0;
+    this.interruptible = false;
+    this.excep = [];
+    this.delayed = false;
+    this.blockedOn = null;
+    this.retryInterrupted = null;
+    this.transaction = null;
     this.noPreemption = false;
     this.isSynchronous = false;
     this.continueAsync = false;
-    this.m = 0; // gc mark
-    this.result = null; // result value (used for GHCJS.Foreign.Callback)
+    this.m = 0;
+    this.result = null;
     this.resultIsException = false;
-    this._key = this.tid; // for storing in h$Set / h$Map
+    this._key = this.tid;
 }
 function h$rts_getThreadId(t) {
   return t.tid;
@@ -8105,7 +6286,6 @@ function h$cmp_thread(t1,t2) {
   if(t1.tid > t2.tid) return 1;
   return 0;
 }
-// description of the thread, if unlabeled then just the thread id
 function h$threadString(t) {
   if(t === null) {
     return "<no thread>";
@@ -8126,7 +6306,6 @@ function h$forkThread(a, inherit) {
   if(inherit && h$currentThread) {
     t.mask = h$currentThread.mask;
   }
-  // TRACE_SCHEDULER("sched: action forked: " + a.f.n);
   t.stack[4] = h$ap_1_0;
   t.stack[5] = a;
   t.stack[6] = h$return;
@@ -8135,7 +6314,6 @@ function h$forkThread(a, inherit) {
   return t;
 }
 function h$threadStatus(t) {
-  // status, capability, locked
   { h$ret1 = (1); h$ret2 = (0); return (t.status); };
 }
 function h$waitRead(fd) {
@@ -8148,13 +6326,11 @@ function h$waitWrite(fd) {
   h$currentThread.interruptible = true;
   return h$blockThread(h$currentThread,fd,[h$waitWrite,fd]);
 }
-// threadDelay support:
 var h$delayed = new h$HeapSet();
 function h$wakeupDelayed(now) {
     while(h$delayed.size() > 0 && h$delayed.peekPrio() < now) {
         var t = h$delayed.pop();
         ;
-        // might have been woken up early, don't wake up again in that case
         if(t.delayed) {
             t.delayed = false;
             h$wakeupThread(t);
@@ -8163,7 +6339,7 @@ function h$wakeupDelayed(now) {
 }
 function h$delayThread(time) {
   var now = Date.now();
-  var ms = time/1000; // we have no microseconds in JS
+  var ms = time/1000;
   ;
   h$delayed.add(now+ms, h$currentThread);
   h$currentThread.delayed = true;
@@ -8172,7 +6348,7 @@ function h$delayThread(time) {
 }
 function h$resumeDelayThread() {
   h$r1 = false;
-  return h$rs(); // stack[h$sp];
+  return h$rs();
 }
 function h$yield() {
   if(h$currentThread.isSynchronous) {
@@ -8185,11 +6361,9 @@ function h$yield() {
     return h$reschedule;
   }
 }
-// raise the async exception in the thread if not masked
 function h$killThread(t, ex) {
   ;
   if(t === h$currentThread) {
-    // if target is self, then throw even if masked
     h$sp += 2;
     h$stack[h$sp-1] = h$r1;
     h$stack[h$sp] = h$return;
@@ -8197,7 +6371,7 @@ function h$killThread(t, ex) {
   } else {
     ;
     if(t.mask === 0 || (t.mask === 2 && t.interruptible)) {
-      if(t.stack) { // finished threads don't have a stack anymore
+      if(t.stack) {
         h$forceWakeupThread(t);
         t.sp += 2;
         t.stack[t.sp-1] = ex;
@@ -8272,14 +6446,12 @@ function h$pendingAsync() {
   var t = h$currentThread;
   return (t.excep.length > 0 && (t.mask === 0 || (t.mask === 2 && t.interruptible)));
 }
-// post the first of the queued async exceptions to
-// this thread, restore frame is in thread if alreadySuspended
 function h$postAsync(alreadySuspended,next) {
     var t = h$currentThread;
     var v = t.excep.shift();
     ;
-    var tposter = v[0]; // posting thread, blocked
-    var ex = v[1]; // the exception
+    var tposter = v[0];
+    var ex = v[1];
     if(v !== null && tposter !== null) {
         h$wakeupThread(tposter);
     }
@@ -8291,8 +6463,6 @@ function h$postAsync(alreadySuspended,next) {
     h$stack[h$sp] = h$raiseAsync_frame;
     t.sp = h$sp;
 }
-// wakeup thread, thread has already been removed
-// from any queues it was blocked on
 function h$wakeupThread(t) {
     ;
     if(t.status === (1)) {
@@ -8305,8 +6475,6 @@ function h$wakeupThread(t) {
     h$threads.enqueue(t);
     h$startMainLoop();
 }
-// force wakeup, remove this thread from any
-// queue it's blocked on
 function h$forceWakeupThread(t) {
   ;
   if(t.status === (1)) {
@@ -8321,13 +6489,11 @@ function h$removeThreadBlock(t) {
     if(o === null || o === undefined) {
       throw ("h$removeThreadBlock: blocked on null or undefined: " + h$threadString(t));
     } else if(o === h$delayed) {
-      // thread delayed
       h$delayed.remove(t);
       t.delayed = false;
     } else if(o instanceof h$MVar) {
       ;
       ;
-      // fixme this is rather inefficient
       var r, rq = new h$Queue();
       while((r = o.readers.dequeue()) !== null) {
           if(r !== t) rq.enqueue(r);
@@ -8347,15 +6513,8 @@ function h$removeThreadBlock(t) {
         o.waiters = wa;
       }
       ;
-/*    } else if(o instanceof h$Fd) {
-      TRACE_SCHEDULER("blocked on fd");
-      h$removeFromArray(o.waitRead,t);
-      h$removeFromArray(o.waitWrite,t); */
     } else if(o instanceof h$Thread) {
       ;
-      // set thread (first in pair) to null, exception will still be delivered
-      // but this thread not woken up again
-      // fixme: are these the correct semantics?
       for(i=0;i<o.excep.length;i++) {
         if(o.excep[i][0] === t) {
           o.excep[i][0] = null;
@@ -8413,14 +6572,10 @@ function h$blockThread(t,o,resume) {
     h$blocked.add(t);
     return h$reschedule;
 }
-// the main scheduler, called from h$mainLoop
-// returns null if nothing to do, otherwise
-// the next function to run
 var h$lastGc = Date.now();
-var h$gcInterval = 1000; // ms
+var h$gcInterval = 1000;
 function h$scheduler(next) {
     ;
-    // if we have a running synchronous thread, the only thing we can do is continue
     if(h$currentThread &&
        h$currentThread.isSynchronous &&
        h$currentThread.status === (0)) {
@@ -8428,8 +6583,6 @@ function h$scheduler(next) {
     }
     var now = Date.now();
     h$wakeupDelayed(now);
-    // find the next runnable thread in the run queue
-    // remove non-runnable threads
     if(h$currentThread && h$pendingAsync()) {
         ;
         if(h$currentThread.status !== (0)) {
@@ -8443,13 +6596,10 @@ function h$scheduler(next) {
     while(t = h$threads.dequeue()) {
         if(t.status === (0)) { break; }
     }
-    // if no other runnable threads, just continue current (if runnable)
     if(t === null) {
         ;
         if(h$currentThread && h$currentThread.status === (0)) {
-            // do gc after a while
             if(now - h$lastGc > h$gcInterval) {
-                // save active data for the thread on its stack
                 if(next !== h$reschedule && next !== null) {
                     h$suspendCurrentThread(next);
                     next = h$stack[h$sp];
@@ -8458,32 +6608,26 @@ function h$scheduler(next) {
                 h$currentThread = null;
                 h$gc(ct);
                 h$currentThread = ct;
-                // gc might replace the stack of a thread, so reload it
                 h$stack = h$currentThread.stack;
                 h$sp = h$currentThread.sp
             }
             ;
-            return (next===h$reschedule || next === null)?h$stack[h$sp]:next; // just continue
+            return (next===h$reschedule || next === null)?h$stack[h$sp]:next;
         } else {
             ;
             h$currentThread = null;
-            // We could set a timer here so we do a gc even if Haskell pauses for a long time.
-            // However, currently this isn't necessary because h$mainLoop always sets a timer
-            // before it pauses.
             if(now - h$lastGc > h$gcInterval)
                 h$gc(null);
-            return null; // pause the haskell runner
+            return null;
         }
-    } else { // runnable thread in t, switch to it
+    } else {
         ;
         if(h$currentThread !== null) {
             if(h$currentThread.status === (0)) {
                 h$threads.enqueue(h$currentThread);
             }
-            // if h$reschedule called, thread takes care of suspend
             if(next !== h$reschedule && next !== null) {
                 ;
-                // suspend thread: push h$restoreThread stack frame
                 h$suspendCurrentThread(next);
             } else {
                 ;
@@ -8493,18 +6637,14 @@ function h$scheduler(next) {
         } else {
             ;
         }
-        // gc if needed
         if(now - h$lastGc > h$gcInterval) {
             h$currentThread = null;
             h$gc(t);
         }
-        // schedule new one
         h$currentThread = t;
         h$stack = t.stack;
         h$sp = t.sp;
         ;
-        // TRACE_SCHEDULER("sp thing: " + h$stack[h$sp].n);
-        // h$dumpStackTop(h$stack,0,h$sp);
         return h$stack[h$sp];
     }
 }
@@ -8524,7 +6664,6 @@ function h$scheduleMainLoop() {
     if(typeof setTimeout !== 'undefined') {
         if(delay >= 1) {
             ;
-            // node.js 0.10.30 has trouble with non-integral delays
             h$mainLoopTimeout = setTimeout(h$mainLoop, Math.round(delay));
         } else {
             h$mainLoopImmediate = setImmediate(h$mainLoop);
@@ -8556,9 +6695,6 @@ function h$startMainLoop() {
         }
     } else {
       while(true) {
-        // the try/catch block appears to prevent a crash with
-        // Safari on iOS 10, even though this path is never taken
-        // in a browser.
         try {
           h$mainLoop();
         } catch(e) {
@@ -8569,9 +6705,9 @@ function h$startMainLoop() {
 }
 var h$busyYield = 500;
 var h$schedQuantum = 25;
-var h$mainLoopImmediate = null; // immediate id if main loop has been scheduled immediately
-var h$mainLoopTimeout = null; // timeout id if main loop has been scheduled with a timeout
-var h$mainLoopFrame = null; // timeout id if main loop has been scheduled with an animation frame
+var h$mainLoopImmediate = null;
+var h$mainLoopTimeout = null;
+var h$mainLoopFrame = null;
 var h$running = false;
 var h$nextThread = null;
 function h$mainLoop() {
@@ -8592,14 +6728,13 @@ function h$mainLoop() {
   var start = Date.now();
   do {
     c = h$scheduler(c);
-    if(c === null) { // no running threads
+    if(c === null) {
       h$nextThread = null;
       h$running = false;
       h$currentThread = null;
       h$scheduleMainLoop();
       return;
     }
-    // yield to js after h$busyYield (default value GHCJS_BUSY_YIELD)
     if(!h$currentThread.isSynchronous && Date.now() - start > h$busyYield) {
       ;
       if(c !== h$reschedule) h$suspendCurrentThread(c);
@@ -8620,7 +6755,6 @@ function h$runThreadSliceCatch(c) {
   try {
     return h$runThreadSlice(c);
   } catch(e) {
-    // uncaught exception in haskell code, kill thread
     c = null;
     if(h$stack && h$stack[0] === h$doneMain_e) {
       h$stack = null;
@@ -8636,22 +6770,6 @@ function h$runThreadSliceCatch(c) {
   }
   return h$reschedule;
 }
-/*
-  run thread h$currentThread for a single time slice
-
-     - c: the next function to call from the trampoline
-
-  returns:
-    the next function to call in this thread
-
-  preconditions:
-    h$currentThread is the thread to run
-    h$stack         is the stack of this thread
-    h$sp            is the stack pointer
-  
-    any global variables needed to pass arguments have been set
-    the caller has to update the thread state object
- */
 function h$runThreadSlice(c) {
   var count, scheduled = Date.now();
   while(c !== h$reschedule &&
@@ -8686,11 +6804,6 @@ function h$reportMainLoopException(e, isMainThread) {
 }
 function h$handleBlockedSyncThread(c) {
   ;
-  /*
-    if we have a blocked synchronous/non-preemptible thread,
-    and it's blocked on a black hole, first try to clear
-    it.
-   */
   var bo = h$currentThread.blockedOn;
   if(h$currentThread.status === (1) &&
      (typeof (bo) === 'object' && (bo) && (bo).f && (bo).f.t === (5)) &&
@@ -8698,10 +6811,6 @@ function h$handleBlockedSyncThread(c) {
     ;
     c = h$stack[h$sp];
   }
-  /*
-    if still blocked, then either fall back to async,
-    or throw a WouldBlock exception
-   */
   if(h$currentThread.isSynchronous && h$currentThread.status === (1)) {
     if(h$currentThread.continueAsync) {
       h$currentThread.isSynchronous = false;
@@ -8714,25 +6823,21 @@ function h$handleBlockedSyncThread(c) {
       h$stack[h$sp] = h$raiseAsync_frame;
       h$forceWakeupThread(h$currentThread);
       c = h$raiseAsync_frame;
-    } // otherwise a non-preemptible thread, keep it in the same state
+    }
   }
   return c;
 }
-// run the supplied IO action in a new thread
-// returns immediately, thread is started in background
 function h$run(a) {
   ;
   var t = h$forkThread(a, false);
   h$startMainLoop();
   return t;
 }
-/** @constructor */
 function h$WouldBlock() {
 }
 h$WouldBlock.prototype.toString = function() {
   return "Haskell Operation would block";
 }
-/** @constructor */
 function h$HaskellException(msg) {
   this._msg = msg;
 }
@@ -8755,19 +6860,6 @@ function h$setCurrentThreadResultValue(v) {
   h$currentThread.result = v;
   h$currentThread.resultIsException = false;
 }
-/*
-   run a Haskell (IO JSVal) action synchronously, returning
-   the result. Uncaught Haskell exceptions are thrown as a
-   h$HaskellException. If the action could not finish due to
-   blocking, a h$WouldBlock exception is thrown instead.
-
-     - a:    the (IO JSVal) action
-     - cont: continue async if blocked
-         (the call to h$runSyncReturn would still throw h$WouldBlock,
-          since there would be no return value)
-
-   returns: the result of the IO action
- */
 function h$runSyncReturn(a, cont) {
   var t = new h$Thread();
   ;
@@ -8785,17 +6877,6 @@ function h$runSyncReturn(a, cont) {
     throw new Error("h$runSyncReturn: Unexpected thread status: " + t.status);
   }
 }
-/*
-   run a Haskell IO action synchronously, ignoring the result
-   or any exception in the Haskell code
-     
-     - a:    the IO action
-     - cont: continue async if blocked
-
-   returns: true if the action ran to completion, false otherwise
-
-   throws: any uncaught Haskell or JS exception except WouldBlock
- */
 function h$runSync(a, cont) {
   var t = new h$Thread();
   ;
@@ -8822,7 +6903,7 @@ function h$runSyncAction(t, a, cont) {
   t.continueAsync = cont;
   var ct = h$currentThread;
   var csp = h$sp;
-  var cr1 = h$r1; // do we need to save more than this?
+  var cr1 = h$r1;
   var caught = false, excep = null;
   h$currentThread = t;
   h$stack = t.stack;
@@ -8853,8 +6934,6 @@ function h$runSyncAction(t, a, cont) {
   }
   if(caught) throw excep;
 }
-// run other threads synchronously until the blackhole is 'freed'
-// returns true for success, false for failure, a thread blocks
 function h$runBlackholeThreadSync(bh) {
   ;
   var ct = h$currentThread;
@@ -8862,8 +6941,6 @@ function h$runBlackholeThreadSync(bh) {
   var success = false;
   var bhs = [];
   var currentBh = bh;
-  // we don't handle async exceptions here,
-  // don't run threads with pending exceptions
   if(((bh).d1).excep.length > 0) {
     ;
     return false;
@@ -8883,8 +6960,6 @@ function h$runBlackholeThreadSync(bh) {
         c = c();
       }
       if(c === h$reschedule) {
- // perhaps new blackhole, then continue with that thread,
- // otherwise fail
         if((typeof (h$currentThread.blockedOn) === 'object' && (h$currentThread.blockedOn) && (h$currentThread.blockedOn).f && (h$currentThread.blockedOn).f.t === (5))) {
           ;
           bhs.push(currentBh);
@@ -8900,7 +6975,7 @@ function h$runBlackholeThreadSync(bh) {
           ;
           break;
         }
-      } else { // blackhole updated: suspend thread and pick up the old one
+      } else {
         ;
         ;
         h$suspendCurrentThread(c);
@@ -8918,7 +6993,6 @@ function h$runBlackholeThreadSync(bh) {
       }
     }
   } catch(e) { }
-  // switch back to original thread
   h$sp = sp;
   h$stack = ct.stack;
   h$currentThread = ct;
@@ -8929,11 +7003,8 @@ function h$syncThreadState(tid) {
     ((tid.continueAsync || !tid.isSynchronous) ? 2 : 0) |
     ((tid.noPreemption || tid.isSynchronous) ? 4 : 0);
 }
-// run the supplied IO action in a main thread
-// (program exits when this thread finishes)
 function h$main(a) {
   var t = new h$Thread();
-  //TRACE_SCHEDULER("sched: starting main thread");
     t.stack[0] = h$doneMain_e;
   if(!h$isBrowser && !h$isGHCJSi) {
     t.stack[2] = h$baseZCGHCziTopHandlerzitopHandler;
@@ -8961,7 +7032,6 @@ function h$doneMain() {
   h$finishThread(h$currentThread);
   return h$reschedule;
 }
-/** @constructor */
 function h$ThreadAbortedError(code) {
   this.code = code;
 }
@@ -8978,7 +7048,6 @@ function h$exitProcess(code) {
     } else if(h$isJsCore) {
         if(h$base_stdoutLeftover.val !== null) print(h$base_stdoutLeftover.val);
         if(h$base_stderrLeftover.val !== null) debug(h$base_stderrLeftover.val);
-        // jsc does not support returning a nonzero value, print it instead
         if(code !== 0) debug("GHCJS JSC exit status: " + code);
         quit();
     } else {
@@ -8989,19 +7058,16 @@ function h$exitProcess(code) {
         }
     }
 }
-// MVar support
 var h$mvarId = 0;
-/** @constructor */
 function h$MVar() {
   ;
   this.val = null;
   this.readers = new h$Queue();
   this.writers = new h$Queue();
-  this.waiters = null; // waiting for a value in the MVar with ReadMVar
-  this.m = 0; // gc mark
+  this.waiters = null;
+  this.m = 0;
   this.id = ++h$mvarId;
 }
-// set the MVar to empty unless there are writers
 function h$notifyMVarEmpty(mv) {
   var w = mv.writers.dequeue();
   if(w !== null) {
@@ -9009,7 +7075,6 @@ function h$notifyMVarEmpty(mv) {
     var val = w[1];
     ;
     mv.val = val;
-    // thread is null if some JavaScript outside Haskell wrote to the MVar
     if(thread !== null) {
       h$wakeupThread(thread);
     }
@@ -9019,7 +7084,6 @@ function h$notifyMVarEmpty(mv) {
   }
   ;
 }
-// set the MVar to val unless there are readers
 function h$notifyMVarFull(mv,val) {
   if(mv.waiters && mv.waiters.length > 0) {
     for(var i=0;i<mv.waiters.length;i++) {
@@ -9103,7 +7167,6 @@ function h$tryPutMVar(mv,val) {
     return 1;
   }
 }
-// box up a JavaScript value and write it to the MVar synchronously
 function h$writeMVarJs1(mv,val) {
   var v = (h$c1(h$data1_e, (val)));
   if(mv.val !== null) {
@@ -9124,8 +7187,6 @@ function h$writeMVarJs2(mv,val1,val2) {
     h$notifyMVarFull(mv,v);
   }
 }
-// IORef support
-/** @constructor */
 function h$MutVar(v) {
     this.val = v;
     this.m = 0;
@@ -9135,13 +7196,11 @@ function h$atomicModifyMutVar(mv, fun) {
   mv.val = (h$c1(h$select1_e, (thunk)));
   return (h$c1(h$select2_e, (thunk)));
 }
-// Black holes and updates
-// caller must save registers on stack
 function h$blockOnBlackhole(c) {
   ;
   if(((c).d1) === h$currentThread) {
     ;
-    return h$throw(h$baseZCControlziExceptionziBasezinonTermination, false); // is this an async exception?
+    return h$throw(h$baseZCControlziExceptionziBasezinonTermination, false);
   }
   ;
   if(((c).d2) === null) {
@@ -9155,16 +7214,11 @@ function h$resumeBlockOnBlackhole(c) {
   h$r1 = c;
   return h$ap_0_0_fast();
 }
-// async exception happened in a black hole, make a thunk
-// to resume the computation
-// var h$debugResumableId = 0;
 function h$makeResumable(bh,start,end,extra) {
   var s = h$stack.slice(start,end+1);
   if(extra) {
     s = s.concat(extra);
   }
-//  TRACE_SCHEDULER("making resumable " + (h$debugResumableId+1) + ", stack: ");
-//  h$dumpStackTop(s,0,s.length-1);
   { (bh).f = h$resume_e; (bh).d1 = (s), (bh).d2 = null; };
 }
 var h$enabled_capabilities = h$newByteArray(4);
@@ -9174,10 +7228,9 @@ function h$rtsSupportsBoundThreads() {
 }
 function h$rts_setMainThread(t) {
 }
-// async foreign calls
 function h$mkForeignCallback(x) {
     return function() {
-        if(x.mv === null) { // callback called synchronously
+        if(x.mv === null) {
             x.mv = arguments;
         } else {
             h$notifyMVarFull(x.mv, (h$c1(h$data1_e, (arguments))));
@@ -9185,7 +7238,6 @@ function h$mkForeignCallback(x) {
         }
     }
 }
-// event listeners through MVar
 function h$makeMVarListener(mv, stopProp, stopImmProp, preventDefault) {
   var f = function(event) {
     ;
@@ -9200,92 +7252,48 @@ function h$makeMVarListener(mv, stopProp, stopImmProp, preventDefault) {
 function h$rs() {
   return h$stack[h$sp];
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// software transactional memory
 var h$stmTransactionActive = 0;
 var h$stmTransactionWaiting = 4;
-/** @constructor */
 function h$Transaction(o, parent) {
     ;
     this.action = o;
-    // h$TVar -> h$WrittenTVar, transaction-local changed values
     this.tvars = new h$Map();
-    // h$TVar -> h$LocalTVar, all local tvars accessed anywhere in the transaction
     this.accessed = parent===null?new h$Map():parent.accessed;
-    // nonnull while running a check, contains read variables in this part of the transaction
     this.checkRead = parent===null?null:parent.checkRead;
     this.parent = parent;
     this.state = h$stmTransactionActive;
-    this.invariants = []; // invariants added in this transaction
-    this.m = 0; // gc mark
+    this.invariants = [];
+    this.m = 0;
 }
 var h$stmInvariantN = 0;
-/** @constructor */
 function h$StmInvariant(a) {
     this.action = a;
     this._key = ++h$stmInvariantN;
 }
-/** @constructor */
 function h$WrittenTVar(tv,v) {
     this.tvar = tv;
     this.val = v;
 }
 var h$TVarN = 0;
-/** @constructor */
 function h$TVar(v) {
     ;
-    this.val = v; // current value
-    this.blocked = new h$Set(); // threads that get woken up if this TVar is updated
-    this.invariants = null; // invariants that use this TVar (h$Set)
-    this.m = 0; // gc mark
-    this._key = ++h$TVarN; // for storing in h$Map/h$Set
+    this.val = v;
+    this.blocked = new h$Set();
+    this.invariants = null;
+    this.m = 0;
+    this._key = ++h$TVarN;
 }
-/** @constructor */
 function h$TVarsWaiting(s) {
-  this.tvars = s; // h$Set of TVars we're waiting on
+  this.tvars = s;
 }
-/** @constructor */
 function h$LocalInvariant(o) {
   this.action = o;
   this.dependencies = new h$Set();
 }
-// local view of a TVar
-/** @constructor */
 function h$LocalTVar(v) {
   ;
-  this.readVal = v.val; // the value when read from environment
-  this.val = v.val; // the current uncommitted value
+  this.readVal = v.val;
+  this.val = v.val;
   this.tvar = v;
 }
 function h$atomically(o) {
@@ -9311,30 +7319,25 @@ function h$stmAddTVarInvariant(tv, inv) {
     if(tv.invariants === null) tv.invariants = new h$Set();
     tv.invariants.add(inv);
 }
-// commit current transaction,
-// if it's top-level, commit the TVars, otherwise commit to parent
 function h$stmCommitTransaction() {
     var t = h$currentThread.transaction;
     var tvs = t.tvars;
     var wtv, i = tvs.iter();
-    if(t.parent === null) { // top-level commit
+    if(t.parent === null) {
         ;
- // write new value to TVars and collect blocked threads
         var thread, threadi, blockedThreads = new h$Set();
         while((wtv = i.nextVal()) !== null) {
      h$stmCommitTVar(wtv.tvar, wtv.val, blockedThreads);
  }
- // wake up all blocked threads
         threadi = blockedThreads.iter();
         while((thread = threadi.next()) !== null) {
      h$stmRemoveBlockedThread(thread.blockedOn, thread);
             h$wakeupThread(thread);
  }
- // commit our new invariants
         for(var j=0;j<t.invariants.length;j++) {
             h$stmCommitInvariant(t.invariants[j]);
         }
-    } else { // commit subtransaction
+    } else {
         ;
         var tpvs = t.parent.tvars;
         while((wtv = i.nextVal()) !== null) tpvs.put(wtv.tvar, wtv);
@@ -9352,13 +7355,11 @@ function h$stmValidateTransaction() {
 function h$stmAbortTransaction() {
   h$currentThread.transaction = h$currentThread.transaction.parent;
 }
-// add an invariant
 function h$stmCheck(o) {
   h$currentThread.transaction.invariants.push(new h$LocalInvariant(o));
   return false;
 }
 function h$stmRetry() {
-  // unwind stack to h$atomically_e or h$stmCatchRetry_e frame
   while(h$sp > 0) {
     var f = h$stack[h$sp];
     if(f === h$atomically_e || f === h$stmCatchRetry_e) {
@@ -9369,7 +7370,7 @@ function h$stmRetry() {
       size = ((h$stack[h$sp-1] >> 8) + 2);
     } else {
       var tag = f.gtag;
-      if(tag < 0) { // dynamic size
+      if(tag < 0) {
         size = h$stack[h$sp-1];
       } else {
         size = (tag & 0xff) + 1;
@@ -9377,11 +7378,10 @@ function h$stmRetry() {
     }
     h$sp -= size;
   }
-  // either h$sp == 0 or at a handler
   if(h$sp > 0) {
     if(f === h$atomically_e) {
       return h$stmSuspendRetry();
-    } else { // h$stmCatchRetry_e
+    } else {
       var b = h$stack[h$sp-1];
       h$stmAbortTransaction();
       h$sp -= 2;
@@ -9431,8 +7431,6 @@ function h$writeTVar(tv, v) {
 function h$sameTVar(tv1, tv2) {
   return tv1 === tv2;
 }
-// get the local value of the TVar in the transaction t
-// tvar is added to the read set
 function h$readLocalTVar(t, tv) {
   if(t.checkRead !== null) {
     t.checkRead.add(tv);
@@ -9493,7 +7491,6 @@ function h$stmCommitTVar(tv, v, threads) {
         tv.val = v;
     }
 }
-// remove the thread from the queues of the TVars in s
 function h$stmRemoveBlockedThread(s, thread) {
     var tv, i = s.tvars.iter();
     while((tv = i.next()) !== null) {
@@ -9507,68 +7504,9 @@ function h$stmCommitInvariant(localInv) {
         h$stmAddTVarInvariant(dep, inv);
     }
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
-// static pointers
 var h$static_pointer_table = null;
 var h$static_pointer_table_keys = null;
 function h$hs_spt_insert(key1,key2,key3,key4,ref) {
-    //  h$log("hs_spt_insert: " + key1 + " " + key2 + " " + key3 + " " + key4 + " -> " + h$collectProps(ref));
     if(!h$static_pointer_table) {
  h$static_pointer_table = [];
  h$static_pointer_table_keys = [];
@@ -9600,54 +7538,14 @@ function h$hs_spt_keys(tgt_d, tgt_o, n) {
 }
 function h$hs_spt_lookup(key_d, key_o) {
     var i3 = key_d.i3, o = key_o >> 2;
-    // h$log("hs_spt_lookup");
     { h$ret1 = (0); return (h$hs_spt_lookup_key(i3[o+1],i3[o],i3[o+3],i3[o+2])); };
 }
 function h$hs_spt_lookup_key(key1,key2,key3,key4) {
-    // h$log("hs_spt_lookup_key: " + key1 + " " + key2 + " " + key3 + " " + key4);
     var s = h$static_pointer_table;
     if(s && s[key1] && s[key1][key2] && s[key1][key2][key3] &&
        s[key1][key2][key3][key4]) return s[key1][key2][key3][key4];
     return null;
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/*
-  Stable pointers are all allocated in the h$StablePtrData buffer and
-  can therefore be distinguished by offset
-
-  StablePtr# is treated as Word32# when it comes to writing and reading them
- */
 var h$stablePtrData = [null];
 var h$stablePtrBuf = h$newByteArray(8);
 var h$stablePtrN = 1;
@@ -9675,70 +7573,12 @@ function h$hs_free_stable_ptr(stable_d, stable_o) {
     h$stablePtrFree.push(slot);
   }
 }
-// not strictly stableptr, but we make it work only for stable pointers
 function h$addrToAny(addr_v, addr_o) {
   ;
   ;
   var slot = addr_o >> 2;
   return h$stablePtrData[slot];
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-// values defined in Gen2.ClosureInfo
-// thread status
-/*
- * low-level heap object manipulation macros
- */
-// GHCJS.Prim.JSVal
-// GHCJS.Prim.JSException
-// Exception dictionary for JSException
-// SomeException
-// GHC.Ptr.Ptr
-// GHC.Integer.GMP.Internals
-// Data.Maybe.Maybe
-// #define HS_NOTHING h$nothing
-// Data.List
-// Data.Text
-// Data.Text.Lazy
-// black holes
-// can we skip the indirection for black holes?
-// resumable thunks
-// general deconstruction
-// retrieve  a numeric value that's possibly stored as an indirection
-// generic lazy values
-// generic data constructors and selectors
-// unboxed tuple returns
-// #define RETURN_UBX_TUP1(x) return x;
 function h$__hscore_sizeof_termios() {
     ;
     return 4;
@@ -9793,11 +7633,11 @@ function h$__hscore_poke_lflag(a, b, c) {
 }
 function h$__hscore_ptr_c_cc(a, b) {
     ;
-    { h$ret1 = (0); return (h$newByteArray(8)); }; // null;
+    { h$ret1 = (0); return (h$newByteArray(8)); };
 }
 function h$__hscore_vmin() {
     ;
-    { h$ret1 = (0); return (h$newByteArray(8)); }; // null;
+    { h$ret1 = (0); return (h$newByteArray(8)); };
 }
 function h$__hscore_vtime() {
     ;
@@ -9815,72 +7655,12 @@ function h$__hscore_sig_setmask() {
     ;
     return 0;
 }
-/* Copyright (C) 1991-2014 Free Software Foundation, Inc.
-   This file is part of the GNU C Library.
-
-   The GNU C Library is free software; you can redistribute it and/or
-   modify it under the terms of the GNU Lesser General Public
-   License as published by the Free Software Foundation; either
-   version 2.1 of the License, or (at your option) any later version.
-
-   The GNU C Library is distributed in the hope that it will be useful,
-   but WITHOUT ANY WARRANTY; without even the implied warranty of
-   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
-   Lesser General Public License for more details.
-
-   You should have received a copy of the GNU Lesser General Public
-   License along with the GNU C Library; if not, see
-   <http://www.gnu.org/licenses/>.  */
-/* This header is separate from features.h so that the compiler can
-   include it implicitly at the start of every compilation.  It must
-   not itself include <features.h> or any other header that includes
-   <features.h> because the implicit include comes before any feature
-   test macros that may be defined in a source file before it first
-   explicitly includes a system header.  GCC knows the name of this
-   header in order to preinclude it.  */
-/* glibc's intent is to support the IEC 559 math functionality, real
-   and complex.  If the GCC (4.9 and later) predefined macros
-   specifying compiler intent are available, use them to determine
-   whether the overall intent is to support these features; otherwise,
-   presume an older compiler has intent to support these features and
-   define these macros by default.  */
-/* wchar_t uses ISO/IEC 10646 (2nd ed., published 2011-03-15) /
-   Unicode 6.0.  */
-/* We do not support C11 <threads.h>.  */
-/*
-   Runtime inspection of Haskell data.
-
-   The code generator can emit calls to these functions
- */
-/*
-function h$verify_rep_int64(x, y) {
-
-}
-
-function h$verify_rep_word64(x, y) {
-
-}
-*/
-/*
-  an int rep is an integer in range [-2^31..2^31-1]
-    (for Word# values, the value is treated as unsigned by the RTS. From
-     JavaScript it still looks signed.
-    )
- */
 function h$verify_rep_int(x) {
   if(typeof x === 'number' &&
      (x|0) === x
     ) return;
   throw new Error("invalid int rep " + h$show_val(x));
 }
-/*
-function h$verify_rep_word(x, y) {
-
-}
-*/
-/*
-   a long rep is two integers in rage [-2^31..2^31-1]
- */
 function h$verify_rep_long(x, y) {
   if(typeof x === 'number' &&
      typeof y === 'number' &&
@@ -9889,38 +7669,22 @@ function h$verify_rep_long(x, y) {
     ) return;
   throw new Error("invalid long rep " + h$show_val(x) + " " + h$show_val(y));
 }
-/*
-function h$verify_rep_float(x) {
-
-}
-*/
 function h$verify_rep_double(x) {
   if(typeof x === 'number') return;
   throw new Error("invalid double rep " + h$show_val(x));
 }
-/*
-  an array rep is a JavaScript array. The elements are other
-  array reps or heap objects.
- */
 function h$verify_rep_arr(x) {
   if(h$verify_rep_is_arr(x)) return;
   throw new Error("invalid array rep " + h$show_val(x));
 }
 function h$verify_rep_is_arr(x) {
-  // XXX check the elements?
   return (typeof x === 'object'
           && x
           && Array.isArray(x)
-          // XXX enable this check
-          // && x.__ghcjsArray === true
         );
 }
 function h$verify_rep_rtsobj(x) {
-  // unspecified unlifted value
 }
-/*
-  an rts object rep is one of the known RTS object types
- */
 function h$verify_rep_is_rtsobj(o) {
  return (o instanceof h$MVar ||
          o instanceof h$MutVar ||
@@ -9940,20 +7704,9 @@ function h$verify_rep_is_bytearray(o) {
           o.buf instanceof ArrayBuffer &&
           typeof o.len === 'number');
 }
-/*
-  a heap object rep is either an object or an unboxed heap object
-
-  unboxed heap objects store evaluated values of type 'number' or 'boolean'
-  without wrapping them in a normal heap object. this is only done for
-  data types with a single constructor and a single field of an appropriate type
- */
 function h$verify_rep_heapobj(o) {
-  // possibly an unlifted rts object
-  // XXX: we should do a different check for these
   if(h$verify_rep_is_rtsobj(o)) return;
-  // unboxed rep
   if(typeof o === 'number' || typeof o === 'boolean') return;
-  // boxed rep
   if(typeof o === 'object' &&
      o &&
      typeof o.f === 'function' &&
@@ -9962,49 +7715,42 @@ function h$verify_rep_heapobj(o) {
    ) return;
   throw new Error("invalid heapobj rep " + h$show_val(o));
 }
-/*
-   an addr rep is a data object and an integer offset
- */
 function h$verify_rep_addr(v, o) {
   if(typeof o === 'number' &&
      (o|0) === o &&
-     // o        >=  0        && // XXX we could treat it as unsigned, should we?
      typeof v === 'object'
     ) return;
   throw new Error("invalid addr rep " + h$show_val(v) + " " + o);
 }
-/*
-   v must be a value of type tc that can be matched
- */
 function h$verify_match_alg(tc, v) {
   if(typeof v === 'boolean') {
     if(tc === "ghc-prim:GHC.Types.Bool") return;
     throw new Error("invalid pattern match boolean rep " + tc);
   } else if(typeof v === 'number') {
-    // h$log("h$verify_match_alg number: " + tc);
     return;
   } else if(typeof v === 'object') {
-    // h$log("verify_match_alg_obj: " + tc);
     if(!(typeof v.f === 'function' &&
          typeof v.f.a === 'number' &&
          typeof v.f.t === 'number' &&
-         v.f.t === 2 /// con
+         v.f.t === 2
        )) {
          throw new Error("not a data constructor " + tc + ": " + h$show_val(v));
     }
-    // XXX add check for the type
     return;
   }
   throw new Error("invalid pattern match rep " + tc + ": " + h$show_val(v));
 }
-/*
-   debug show object
- */
 function h$show_val(o) {
   if(typeof o === 'undefined') return '<undefined>'
   if(o === null) return '<null>'
   if(typeof o !== 'object') return '[' + (typeof o) + ': ' + o + ']'
   return '' + o + ' [' + o.constructor.name + '] ' + h$collectProps(o);
+}
+function h$debugAlloc_verifyReachability(mark) {
+}
+function h$debugAlloc_notifyAlloc(obj) {
+}
+function h$debugAlloc_notifyUse(obj) {
 }
 function h$c(f)
 {
@@ -13230,6 +10976,13 @@ function h$catch_e()
   return h$stack[h$sp];
 };
 h$o(h$catch_e, (-1), 0, 2, 256, null);
+function h$dataToTag_e()
+{
+  h$r1 = ((h$r1 === true) ? 1 : ((typeof h$r1 === "object") ? (h$r1.f.a - 1) : 0));
+  --h$sp;
+  return h$stack[h$sp];
+};
+h$o(h$dataToTag_e, (-1), 0, 0, 256, null);
 function h$ap1_e()
 {
   var h$RTS_32 = h$r1.d1;
